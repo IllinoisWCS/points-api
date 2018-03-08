@@ -38,6 +38,14 @@ module.exports = function (router) {
       errMsg += 'A date for the event is required! '
     }
 
+    if (!req.body.pw) {
+      errMsg += 'A password is required! '
+    }
+
+    if (req.body.pw != secrets.pw) {
+      errMsg += 'Incorrect password! '
+    }
+
     if (errMsg) {
       errMsg = 'Validation error(s): ' + errMsg;
       console.log(errMsg);
