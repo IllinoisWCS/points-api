@@ -100,12 +100,7 @@ module.exports = function (router) {
     var date = req.body.date;
     var netid = req.params.id;
 
-    let valid = true;
-    const re = new RegExp('\b[a-zA-Z]+\d{1,3}\b');
-    let arr = re.exec(netid);
-    if (arr === null) {
-      valid = false;
-    }
+    let valid = validate_netid(netid);
     if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
 
     var targetUser;
@@ -159,7 +154,7 @@ module.exports = function (router) {
 
     var targetUser;
 
-    var valid = validate_netid(req.params.id);
+    let valid = validate_netid(req.params.id);
     if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
 
     User.findOne({
@@ -212,10 +207,6 @@ module.exports = function (router) {
 }
 
 function validate_netid(netid) {
-  const re = new RegExp('\b[a-zA-Z]+\d{1,3}\b');
-  var arr = re.exec(req.params.id);
-  if (arr === null) {
-    return false;
-  }
-  return true;
+  const re = new RegExp('\\b[a-z]+\\d{1,3}\\b');
+  return re.test(netid);
 }
