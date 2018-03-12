@@ -75,8 +75,12 @@ module.exports = function (router) {
     })
   });
 
+
   eventIdRoute.put(function (req, res) {
     const netid = req.body.netid;
+
+    let valid = validate_netid(netid);
+    if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
 
     Event.findOne({ _id: req.params.id }, function (err, event) {
       if (err || !event) return res.status(404).json({ message: 'Event not found', data: [] });
@@ -95,6 +99,14 @@ module.exports = function (router) {
     var type = req.body.type;
     var date = req.body.date;
     var netid = req.params.id;
+
+    let valid = true;
+    const re = new RegExp('\b[a-zA-Z]+\d{1,3}\b');
+    let arr = re.exec(netid);
+    if (arr === null) {
+      valid = false;
+    }
+    if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
 
     var targetUser;
 
@@ -147,6 +159,9 @@ module.exports = function (router) {
 
     var targetUser;
 
+    var valid = validate_netid(req.params.id);
+    if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
+
     User.findOne({
       netid: req.params.id
     }, function(err, user) {
@@ -194,4 +209,13 @@ module.exports = function (router) {
   });
 
   return router;
+}
+
+function validate_netid(netid) {
+  const re = new RegExp('\b[a-zA-Z]+\d{1,3}\b');
+  var arr = re.exec(req.params.id);
+  if (arr === null) {
+    return false;
+  }
+  return true;
 }
