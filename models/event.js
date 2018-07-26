@@ -6,6 +6,6 @@ var EventSchema = new mongoose.Schema({
     dateCreated: { type: Date, default: Date.now },
     date: { type: Date, default: Date.now },
     attendees: { type: Array, default: []}
-});
+}, { usePushEach: true });
 
 module.exports = mongoose.model('Event', EventSchema);
