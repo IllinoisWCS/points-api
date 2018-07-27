@@ -5,7 +5,7 @@ var EventSchema = new mongoose.Schema({
     points: Number,
     dateCreated: { type: Date, default: Date.now },
     date: { type: Date, default: Date.now },
-    attendees: { type: Array, default: []}
-}, { usePushEach: true });
+    attendees: { type: Array, default: []}},
+    { usePushEach: true });
 
 module.exports = mongoose.model('Event', EventSchema);

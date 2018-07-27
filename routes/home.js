@@ -84,13 +84,15 @@ module.exports = function (router) {
 
     Event.findOne({ _id: req.params.id }, function (err, event) {
       if (err || !event) return res.status(404).json({ message: 'Event not found', data: [] });
+      if (event.attendees.includes(netid)) {
+        return res.status(201).json({message: 'Already signed in', data: event});
+      }
       event.attendees.push(netid);
       event.save(function (err) {
         if (err) return res.status(500).json({ message: 'Error with updating the event', data: [] });
         res.status(201).json({ message: 'Event updated!', data: event });
       });
     })
-
   })
 
   var userRoute = router.route('/users/:id');
@@ -132,9 +134,11 @@ module.exports = function (router) {
       // Update userstats w/ committee & oh pts
 
       if (type === 'committee') {
-        targetUser.committees.push(date)
-      } else if (type === 'office_hours'){
-        targetUser.office_hours.push(date);
+        if (!targetUser.committees.includes(date))
+          targetUser.committees.push(date);
+      } else if (type === 'office_hours') {
+        if (!targetUser.office_hours.includes(date))
+          targetUser.office_hours.push(date);
       }
 
       targetUser.save(function (err) {
