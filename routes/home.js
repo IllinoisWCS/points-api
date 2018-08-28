@@ -134,10 +134,10 @@ module.exports = function (router) {
       // Update userstats w/ committee & oh pts
 
       if (type === 'committee') {
-        if (!targetUser.committees.includes(date))
+        if (targetUser.committees.includes(date) === false)
           targetUser.committees.push(date);
       } else if (type === 'office_hours') {
-        if (!targetUser.office_hours.includes(date))
+        if (targetUser.office_hours.includes(date) === false)
           targetUser.office_hours.push(date);
       }
 
