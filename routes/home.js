@@ -80,7 +80,8 @@ module.exports = function (router) {
     const netid = req.body.netid;
 
     let valid = validate_netid(netid);
-    if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
+    // if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
+    if (request.body.event_key != secrets.event_key) return res.status(404).json({message: 'Invalid key', data: []});
 
     Event.findOne({ _id: req.params.id }, function (err, event) {
       if (err || !event) return res.status(404).json({ message: 'Event not found', data: [] });
