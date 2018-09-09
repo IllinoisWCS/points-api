@@ -135,10 +135,10 @@ module.exports = function (router) {
       // Update userstats w/ committee & oh pts
 
       if (type === 'committee') {
-        if (!targetUser.committees.includes(date))
+        if (targetUser.committees.includes(date) === false)
           targetUser.committees.push(date);
       } else if (type === 'office_hours') {
-        if (!targetUser.office_hours.includes(date))
+        if (targetUser.office_hours.includes(date) === false)
           targetUser.office_hours.push(date);
       }
 
@@ -190,22 +190,22 @@ module.exports = function (router) {
       // Update userstats w/ committee & oh pts
       userStats.committees = targetUser.committees;
       userStats.office_hours = targetUser.office_hours;
-    });
 
-    // Totals up points for User
-    var query = Event.find({});
-    query.exec(function (err, events) {
-      if (err) return res.status(500);
+      // Totals up points for User
+      var query = Event.find({});
+      query.exec(function (err, events) {
+        if (err) return res.status(500);
 
-      events.forEach(function (event) {
-        if(event.attendees.includes(req.params.id)) {
-          userStats.attended_events.push(event);
-        }
+        events.forEach(function (event) {
+          if(event.attendees.includes(req.params.id)) {
+            userStats.attended_events.push(event);
+          }
+        })
+
+        // res.json({ message: 'Total number of points for ' + req.params.id + ': ' + total_pts, data: attended_events })
+        res.json({ message: 'OK', data: userStats });
       })
-
-      // res.json({ message: 'Total number of points for ' + req.params.id + ': ' + total_pts, data: attended_events })
-      res.json({ message: 'OK', data: userStats });
-    })
+    });
   });
 
   return router;
