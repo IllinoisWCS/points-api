@@ -80,8 +80,9 @@ module.exports = function (router) {
     const netid = req.body.netid;
 
     let valid = validate_netid(netid);
-    // if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
-    if (request.body.event_key != secrets.event_key) return res.status(404).json({message: 'Invalid key', data: []});
+    if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
+
+    if (req.body.event_key != secrets.event_key) return res.status(404).json({message: 'Invalid event key', data: []});
 
     Event.findOne({ _id: req.params.id }, function (err, event) {
       if (err || !event) return res.status(404).json({ message: 'Event not found', data: [] });
@@ -189,24 +190,22 @@ module.exports = function (router) {
 
       // Update userstats w/ committee & oh pts
       userStats.committees = targetUser.committees;
-      userStats.office_hours = targetUser.office_hours;
+      userStats.office_hours = targetUser.office_hours;;
 
-      // Totals up points for User
-      var query = Event.find({});
-      query.exec(function (err, events) {
-        if (err) return res.status(500);
+    // Totals up points for User
+    var query = Event.find({});
+    query.exec(function (err, events) {
+      if (err) return res.status(500);
 
-        events.forEach(function (event) {
-          if(event.attendees.includes(req.params.id)) {
-            userStats.attended_events.push(event);
-          }
-        })
-
-        // res.json({ message: 'Total number of points for ' + req.params.id + ': ' + total_pts, data: attended_events })
-        res.json({ message: 'OK', data: userStats });
+      events.forEach(function (event) {
+        if(event.attendees.includes(req.params.id)) {
+          userStats.attended_events.push(event);
+        }
       })
-    });
+      res.json({ message: 'OK', data: userStats });
+    })
   });
+      });
 
   return router;
 }

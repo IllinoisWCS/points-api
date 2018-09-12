@@ -22,6 +22,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "mongoose": "^4.10.0",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "npm": "^6.4.1"
   }
 }
