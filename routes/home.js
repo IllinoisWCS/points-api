@@ -122,7 +122,8 @@ module.exports = function (router) {
         var newUser = new User({
           netid: req.params.id,
           office_hours: [],
-          committees: []
+          committees: [],
+          gwc: []
         });
 
         newUser.save(function (err) {
@@ -141,6 +142,9 @@ module.exports = function (router) {
       } else if (type === 'office_hours') {
         if (targetUser.office_hours.includes(date) === false)
           targetUser.office_hours.push(date);
+      } else if (type == 'gwc') {
+        if (targetUser.gwc.includes(date) === false)
+          targetUser.gwc.push(date);
       }
 
       targetUser.save(function (err) {
@@ -155,7 +159,8 @@ module.exports = function (router) {
     var userStats = {
       'attended_events': [],
       'committees': [],
-      'office_hours': []
+      'office_hours': [],
+      'gwc': []
     };
 
     var targetUser;
@@ -176,7 +181,8 @@ module.exports = function (router) {
         var newUser = new User({
           netid: req.params.id,
           office_hours: [],
-          committees: []
+          committees: [],
+          gwc: []
         });
 
         newUser.save(function (err) {
@@ -190,7 +196,8 @@ module.exports = function (router) {
 
       // Update userstats w/ committee & oh pts
       userStats.committees = targetUser.committees;
-      userStats.office_hours = targetUser.office_hours;;
+      userStats.office_hours = targetUser.office_hours;
+      userStats.gwc = targetUser.gwc;
 
     // Totals up points for User
     var query = Event.find({});
