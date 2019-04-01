@@ -277,8 +277,8 @@ function validate_netid(netid) {
 }
 
 function generateEventKey() {
-  i = Math.floor(Math.random() * 100);
-  j = Math.floor(Math.random() * 100);
+  i = Math.floor(Math.random() * 10);
+  j = Math.floor(Math.random() * 10);
 
   return secrets.first_word[i] + ' ' + secrets.second_word[j];
 }
