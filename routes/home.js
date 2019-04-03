@@ -80,7 +80,6 @@ module.exports = function (router) {
     event_key = generateEventKey();
     event_date = new Date(req.body.date);
     expirationDate = new Date(event_date).setHours(event_date.getHours() + 2);
-    console.log(expirationDate);
 
     var newEvent = new Event({
       name: req.body.name,
