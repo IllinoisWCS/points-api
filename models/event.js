@@ -15,9 +15,9 @@ var EventSchema = new mongoose.Schema(
     points: Number,
     category: String,
     key: String,
-    dateCreated: { type: Date, default: Date.now },
     date: { type: Date, default: Date.now },
-    expiration: { type: Date, default: Date.now },
+    startTime: Number,
+    endTime: Number,
     attendees: { type: Array, default: [] }
   },
   { usePushEach: true }

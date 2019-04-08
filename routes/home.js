@@ -2,6 +2,7 @@ var secrets = require('../config/secrets');
 
 var Event = require('../models/event');
 var User = require('../models/user');
+var moment = require('moment-timezone');
 
 module.exports = function (router) {
 
@@ -46,29 +47,31 @@ module.exports = function (router) {
     })
   });
 
+
+  // CREATING A NEW EVENT
   eventsRoute.post(function (req, res) {
     var errMsg = '';
-
     if (!req.body.name) {
       errMsg += 'An event name is required! ';
     }
-
     if (!req.body.points) {
       errMsg += 'A point value for the event is required! ';
     }
-
     if (!req.body.date) {
-      errMsg += 'A date for the event is required! '
+      errMsg += 'A date for the event is required! ';
     }
-
+    if (!req.body.startTime) {
+      errMsg += 'A start time for the event is required! ';
+    }
+    if (!req.body.endTime) {
+      errMsg += 'An end time for the event is required! ';
+    }
     if (!req.body.pw) {
-      errMsg += 'A password is required! '
+      errMsg += 'A password is required! ';
     }
-
     if (req.body.pw != secrets.pw) {
-      errMsg += 'Incorrect password! '
+      errMsg += 'Incorrect password! ';
     }
-
     if (errMsg) {
       errMsg = 'Validation error(s): ' + errMsg;
       console.log(errMsg);
@@ -78,16 +81,15 @@ module.exports = function (router) {
     console.log(req.body);
 
     event_key = generateEventKey();
-    event_date = new Date(req.body.date);
-    expirationDate = new Date(event_date).setHours(event_date.getHours() + 2);
 
     var newEvent = new Event({
       name: req.body.name,
-      date: req.body.date,
       points: req.body.points,
       category: req.body.category,
       key: event_key,
-      expiration: expirationDate
+      date: req.body.date,
+      startTime: req.body.startTime,
+      endTime: req.body.endTime
     });
 
     newEvent.save(function (err) {
@@ -106,25 +108,32 @@ module.exports = function (router) {
   });
 
 
+  // SIGN IN TO EVENT
   eventIdRoute.put(function (req, res) {
+    console.log(req.body);
     const netid = req.body.netid;
 
     let valid = validate_netid(netid);
-    if (valid === false) return res.status(404).json({message: 'invalid netid', data: []});
+    if (valid === false) return res.status(404).json({message: 'Invalid netid :(', data: []});
 
     Event.findOne({ _id: req.params.id }, function (err, event) {
-      if (err || !event) return res.status(404).json({ message: 'event not found', data: [] });
-      if (req.body.event_key != event.key) return res.status(404).json({message: 'invalid event key', data: []});
-      let currentTime = new Date();
-      if (currentTime < event.date || currentTime > event.expiration) return res.status(404).json({message: 'event is not running', data: []})
+      if (err || !event) return res.status(404).json({ message: 'Event not found :(', data: [] });
+      if (req.body.event_key != event.key) return res.status(404).json({message: 'Invalid event key :(', data: []});
+      let currentTime = new Date().getHours() % 12;
+      console.log("currentTime: " + currentTime);
+      // // check if event is running
+      if (currentTime < event.startTime || currentTime >= event.endTime) {
+        return res.status(404).json({message: 'Event is not running :(', data: []});
+      }
+      // already signed in
       if (event.attendees.includes(netid)) {
-        return res.status(201).json({message: 'already signed in', data: event});
+        return res.status(200).json({message: 'You have already signed in.', data: event});
       }
       event.attendees.push(netid);
       event.save(function (err) {
-        if (err) return res.status(500).json({ message: 'error with updating the event', data: [] });
+        if (err) return res.status(500).json({ message: 'Error with updating the event :(', data: [] });
 
-        User.findOne({ netid: req.params.netid }, function (e, user) {
+        User.findOne({ netid: req.body.netid }, function (e, user) {
           if (err) {
             return res.status(500);
           }
@@ -139,18 +148,21 @@ module.exports = function (router) {
             });
 
             newUser.save(function (err) {
-              if (err) return res.status(500).json({ message: 'Error with creating the user', data: [] });
+              if (err) return res.status(500).json({ message: 'Error with creating the user :(', data: [] });
             });
-
             targetUser = newUser;
           } else {
             targetUser = user;
           }
 
+          console.log(targetUser);
+
           targetUser.points = targetUser.points + event.points;
           targetUser.save(function (err) {
-            if (err) return res.status(500).json({ message: 'Error with updating the user', data: [] });
-            res.status(201).json({ message: 'Successfully signed in!', data: event});
+            if (err) {
+              return res.status(500).json({ message: 'Error with updating the user :(', data: [] });
+            }
+            return res.status(201).json({ message: 'Successfully signed in :)', data: event});
           })
         })
       });
@@ -165,7 +177,7 @@ module.exports = function (router) {
     var netid = req.params.id;
 
     let valid = validate_netid(netid);
-    if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
+    if (valid === false) return res.status(404).json({message: 'Invalid netid :(', data: []});
 
     var targetUser;
 
@@ -186,7 +198,7 @@ module.exports = function (router) {
         });
 
         newUser.save(function (err) {
-          if (err) return res.status(500).json({ message: 'Error with creating the user', data: [] });
+          if (err) return res.status(500).json({ message: 'Error with creating the user :(', data: [] });
         });
 
         targetUser = newUser;
@@ -204,7 +216,7 @@ module.exports = function (router) {
       }
 
       targetUser.save(function (err) {
-        if (err) return res.status(500).json({ message: 'Error with updating the user', data: [] });
+        if (err) return res.status(500).json({ message: 'Error with updating the user :(', data: [] });
         res.json({ message: 'OK', data: targetUser });
       })
     });
@@ -221,7 +233,7 @@ module.exports = function (router) {
     var targetUser;
 
     let valid = validate_netid(req.params.id);
-    if (valid === false) return res.status(404).json({message: 'Invalid netid', data: []});
+    if (valid === false) return res.status(404).json({message: 'Invalid netid :(', data: []});
 
     User.findOne({
       netid: req.params.id
@@ -240,7 +252,7 @@ module.exports = function (router) {
         });
 
         newUser.save(function (err) {
-          if (err) return res.status(500).json({ message: 'Error with creating the user', data: [] });
+          if (err) return res.status(500).json({ message: 'Error with creating the user :(', data: [] });
         });
 
         targetUser = newUser;
