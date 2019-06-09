@@ -3,10 +3,11 @@ var express = require("express"),
   router = express.Router(),
   mongoose = require("mongoose"),
   secrets = require("./config/secrets"),
-  bodyParser = require("body-parser");
+  bodyParser = require("body-parser"),
+  cors = require("cors");
 
-// Create our Express application
 var app = express();
+app.use(cors());
 
 // Use environment defined port or 3000
 var port = process.env.PORT || 3000;
@@ -22,7 +23,7 @@ var allowCrossDomain = function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+    "Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
   );
   res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
   next();
