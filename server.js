@@ -18,7 +18,7 @@ mongoose.connect(
   { useMongoClient: true }
 );
 
-// Allow CORS so that backend and frontend could be put on different servers
+//Allow CORS so that backend and frontend could be put on different servers
 var allowCrossDomain = function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(

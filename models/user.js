@@ -13,8 +13,8 @@ var UserSchema = new mongoose.Schema(
     netid: String,
     points: Number,
     office_hours: {type: Array, default: []},
-    committees: {type: Array, default: []}
-    // girlsWhoCode: {type: Array, default: []}
+    committees: {type: Array, default: []},
+    gwc: {type: Array, default: []}
   },
   { usePushEach: true }
 );
