@@ -11,14 +11,14 @@ var mongoose = require("mongoose");
 
 var EventSchema = new mongoose.Schema(
   {
-    name: String,
-    points: Number,
-    category: String,
-    key: String,
-    date: { type: Date, default: Date.now },
-    startTime: Number,
-    endTime: Number,
-    attendees: { type: Array, default: [] }
+    name: { type: String, required: true },
+    points: { type: Number, required: true },
+    category: { type: String, required: true },
+    key: { type: String, required: true },
+    date: { type: Date, required: true },
+    startTime: { type: String, required: true},
+    endTime: { type: String, required: true },
+    attendees: { type: Array, default: [] },
   },
   { usePushEach: true }
 );
