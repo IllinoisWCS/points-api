@@ -30,8 +30,6 @@ module.exports = function (router) {
     eventsRoute.post(async (req, res) => {
         const data = req.body
         const eventKey = utils.generateEventKey()
-        let code = 404
-        let message = 'Event Successfully Created'
         let errMsg = ''
 
         if (!data.name) {
@@ -58,7 +56,7 @@ module.exports = function (router) {
         if (errMsg) {
             errMsg += 'is required.'
             res.json({
-                code: 404,
+                code: 500,
                 message: errMsg,
                 success: false,
             })
