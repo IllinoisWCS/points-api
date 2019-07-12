@@ -81,6 +81,7 @@ module.exports = function (router) {
             res.json({
                 code: 200,
                 message: 'Event Successfully Created',
+                result: eventKey,
                 success: true,
             })
         }
