@@ -3,7 +3,8 @@ const utils = require('../utils')
 
 module.exports = function (router) {
     const eventsRoute = router.route('/events');
-    const eventIdRoute = router.route('/events/:event_id')
+    const eventIdRoute = router.route('/events/:eventId')
+    const eventCheckinRoute = router.route('/events/:eventId/signin')
 
     // get all events
     eventsRoute.get(async (req, res) => {
@@ -17,7 +18,7 @@ module.exports = function (router) {
 
     // get one event
     eventIdRoute.get(async (req, res) => {
-        const eventId = req.params.event_id
+        const eventId = req.params.eventId
         const event = await Event.findById(eventId)
         res.json({
             code: 200,
@@ -86,58 +87,58 @@ module.exports = function (router) {
     })
 
     // update an event
-    // eventIdRoute.put(async (req, res) => {
-    //     const data = req.body
-    //     const eventId = req.params.event_id
-    //     let fieldsToUpdate = {}
+    eventIdRoute.put(async (req, res) => {
+        const data = req.body
+        const eventId = req.params.eventId
+        let fieldsToUpdate = {}
 
-    //     if (data.name) {
-    //         fieldsToUpdate.name = data.name
-    //     }
-    //     if (data.points) {
-    //         fieldsToUpdate.points = data.points
-    //     }
-    //     if (data.category) {
-    //         fieldsToUpdate.category = data.category
-    //     }
-    //     if (data.date) {
-    //         fieldsToUpdate.date = data.date
-    //     }
-    //     if (data.startTime) {
-    //         fieldsToUpdate.startTime = data.startTime
-    //     }
-    //     if (data.endTime) {
-    //         fieldsToUpdate.endTime = data.endTime
-    //     }
+        if (data.name) {
+            fieldsToUpdate.name = data.name
+        }
+        if (data.points) {
+            fieldsToUpdate.points = data.points
+        }
+        if (data.category) {
+            fieldsToUpdate.category = data.category
+        }
+        if (data.date) {
+            fieldsToUpdate.date = data.date
+        }
+        if (data.startTime) {
+            fieldsToUpdate.startTime = data.startTime
+        }
+        if (data.endTime) {
+            fieldsToUpdate.endTime = data.endTime
+        }
 
-    //     const event = await Event.findByIdAndUpdate(
-    //         eventId, 
-    //         { $set: fieldsToUpdate }, 
-    //         { new: true },
-    //     )
+        const event = await Event.findByIdAndUpdate(
+            eventId, 
+            { $set: fieldsToUpdate }, 
+            { new: true },
+        )
         
-    //     // return first msg if event exists, else return second
-    //     const ret = event
-    //         ?   {
-    //                 code: 200,
-    //                 message: 'Event Updated Successfully',
-    //                 success: true,
-    //             }
-    //         :   {
-    //                 code: 404,
-    //                 message: 'Event Not Found',
-    //                 success: false,
-    //             }
+        // return first msg if event exists, else return second
+        const ret = event
+            ?   {
+                    code: 200,
+                    message: 'Event Updated Successfully',
+                    success: true,
+                }
+            :   {
+                    code: 404,
+                    message: 'Event Not Found',
+                    success: false,
+                }
         
-    //     res.json(ret)
-    // })
+        res.json(ret)
+    })
 
     // check-in to event
-    eventIdRoute.put(async (req, res) => {
+    eventCheckinRoute.put(async (req, res) => {
         const data = req.body
         const netId = data.netId
         const key = data.key
-        const eventId = req.params.event_id
+        const eventId = req.params.eventId
 
         // invalid netid
         const isValid = utils.validateNetid(netId)
@@ -196,7 +197,7 @@ module.exports = function (router) {
 
     // delete one event
     eventIdRoute.delete(async (req, res) => {
-        const eventId = req.params.event_id
+        const eventId = req.params.eventId
         const event = await Event.findByIdAndRemove(eventId)
 
         const ret = event
