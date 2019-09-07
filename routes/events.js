@@ -1,12 +1,15 @@
-const { Event, User } = require('../models')
+const {
+    Event,
+    User
+} = require('../models')
 const utils = require('../utils')
 
-module.exports = function (router) {
+module.exports = function(router) {
     const eventsRoute = router.route('/events');
     const eventIdRoute = router.route('/events/:event_id')
 
     // get all events
-    eventsRoute.get(async (req, res) => {
+    eventsRoute.get(async(req, res) => {
         const events = await Event.find({});
         res.json({
             code: 200,
@@ -16,7 +19,7 @@ module.exports = function (router) {
     })
 
     // get one event
-    eventIdRoute.get(async (req, res) => {
+    eventIdRoute.get(async(req, res) => {
         const eventId = req.params.event_id
         const event = await Event.findById(eventId)
         res.json({
@@ -27,7 +30,8 @@ module.exports = function (router) {
     })
 
     // create new event
-    eventsRoute.post(async (req, res) => {
+    eventsRoute.post(async(req, res) => {
+
         const data = req.body
         const eventKey = utils.generateEventKey()
         let errMsg = ''
@@ -54,6 +58,7 @@ module.exports = function (router) {
             errMsg += 'Password, '
         }
         if (errMsg) {
+
             errMsg += 'is required.'
             res.json({
                 code: 500,
@@ -67,6 +72,7 @@ module.exports = function (router) {
                 success: false,
             })
         } else {
+
             const newEvent = new Event({
                 name: data.name,
                 points: data.points,
@@ -80,6 +86,7 @@ module.exports = function (router) {
             res.json({
                 code: 200,
                 message: 'Event Successfully Created',
+                result: eventKey,
                 success: true,
             })
         }
@@ -115,7 +122,7 @@ module.exports = function (router) {
     //         { $set: fieldsToUpdate }, 
     //         { new: true },
     //     )
-        
+
     //     // return first msg if event exists, else return second
     //     const ret = event
     //         ?   {
@@ -128,12 +135,12 @@ module.exports = function (router) {
     //                 message: 'Event Not Found',
     //                 success: false,
     //             }
-        
+
     //     res.json(ret)
     // })
 
     // check-in to event
-    eventIdRoute.put(async (req, res) => {
+    eventIdRoute.put(async(req, res) => {
         const data = req.body
         const netId = data.netId
         const key = data.key
@@ -176,8 +183,10 @@ module.exports = function (router) {
         } else {
             event.attendees.push(netId)
             await event.save()
-            // update user
-            let user = await User.findOne({ netId: data.netId })
+                // update user
+            let user = await User.findOne({
+                netId: data.netId
+            })
             if (!user) {
                 const newUser = new User({
                     netId,
@@ -195,27 +204,25 @@ module.exports = function (router) {
     })
 
     // delete one event
-    eventIdRoute.delete(async (req, res) => {
+    eventIdRoute.delete(async(req, res) => {
         const eventId = req.params.event_id
         const event = await Event.findByIdAndRemove(eventId)
 
-        const ret = event
-        ?   {
-                code: 200,
-                message: 'Event Deleted Successfully',
-                success: true,
-            }
-        :   {
-                code: 404,
-                message: 'Event Not Found',
-                success: false,
-            }
-        
+        const ret = event ? {
+            code: 200,
+            message: 'Event Deleted Successfully',
+            success: true,
+        } : {
+            code: 404,
+            message: 'Event Not Found',
+            success: false,
+        }
+
         res.json(ret)
     })
 
     // delete all events
-    eventsRoute.delete(async (req, res) => {
+    eventsRoute.delete(async(req, res) => {
         await Event.deleteMany({})
         res.json({
             code: 200,
