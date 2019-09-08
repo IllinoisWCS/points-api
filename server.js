@@ -7,7 +7,7 @@ var express = require("express"),
     cors = require("cors");
 
 var app = express();
-app.use(cors());
+// app.use(cors());
 
 // Use environment defined port or 3000
 var port = process.env.PORT || 3000;
@@ -19,7 +19,8 @@ mongoose.connect(
 
 //Allow CORS so that backend and frontend could be put on different servers
 var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', "http://points.illinoiswcs.org");
+    // res.header('Access-Control-Allow-Origin', "http://points.illinoiswcs.org");
+    res.header('Access-Control-Allow-Origin', "*");
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
@@ -32,6 +33,7 @@ var allowCrossDomain = function(req, res, next) {
     // next();
 };
 app.use(allowCrossDomain);
+// app.use(cors());
 // app.use(function(req, res, next) {
 //     // Website you wish to allow to connect
 //     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');

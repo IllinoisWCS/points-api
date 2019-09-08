@@ -8,15 +8,13 @@ var mongoose = require("mongoose");
   committees: array of all committee meeting dates attended
 */
 
-var UserSchema = new mongoose.Schema(
-  {
+var UserSchema = new mongoose.Schema({
     netId: { type: String, required: true },
     points: { type: Number, default: 0 },
     officeHours: { type: Array, default: [] },
     committees: { type: Array, default: [] },
-    girlsWhoCode: {type: Array, default: [] },
-  },
-  { usePushEach: true }
-);
+    girlsWhoCode: { type: Array, default: [] },
+    attendedEvents: { type: Array, default: [] }
+}, { usePushEach: true });
 
 module.exports = mongoose.model("User", UserSchema);

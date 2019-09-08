@@ -1,12 +1,12 @@
 const { User } = require('../models')
 const utils = require('../utils')
 
-module.exports = function (router) {
+module.exports = function(router) {
     const usersRoute = router.route('/users')
     const netIdRoute = router.route('/users/:net_id')
 
     // get all users
-    usersRoute.get(async (req, res) => {
+    usersRoute.get(async(req, res) => {
         const users = await User.find({})
         res.json({
             code: 200,
@@ -16,7 +16,7 @@ module.exports = function (router) {
     })
 
     // get one user
-    netIdRoute.get(async (req, res) => {
+    netIdRoute.get(async(req, res) => {
         const netId = req.params.net_id
         const user = await User.findOne({ netId })
         res.json({
@@ -27,7 +27,7 @@ module.exports = function (router) {
     })
 
     // create new user
-    usersRoute.post(async (req, res) => {
+    usersRoute.post(async(req, res) => {
         const data = req.body
         const netId = data.netId
 
@@ -64,12 +64,12 @@ module.exports = function (router) {
     })
 
     // update user committee, oh, gwc
-    netIdRoute.put(async (req, res) => {
+    netIdRoute.put(async(req, res) => {
         const data = req.body
         const netId = req.params.net_id
         const user = await User.findOne({ netId })
         let message = 'Already Signed In'
-        
+
         if (!user) {
             const newUser = new User({ netId });
             await newUser.save()
@@ -81,7 +81,7 @@ module.exports = function (router) {
                 user.committees.push(data.date)
                 user.points += 0.5
                 message = 'Successfully Added Committee'
-            } 
+            }
         } else if (data.type === 'officeHours') {
             if (!user.officeHours.includes(data.date)) {
                 user.officeHours.push(data.date)
@@ -94,6 +94,12 @@ module.exports = function (router) {
                 user.points += 0.5
                 message = 'Successfully Added Girls Who Code'
             }
+        } else if (data.type === 'attendedEvents') { // TODO: UPDATED CHECK!!
+            if (!user.attendedEvents.includes(data.date)) {
+                user.attendedEvents.push(data.date)
+                user.points += 0.5
+                message = 'Successfully Added Attended Event'
+            }
         }
 
         await user.save()
@@ -105,27 +111,25 @@ module.exports = function (router) {
     })
 
     // delete user
-    netIdRoute.delete(async (req, res) => {
+    netIdRoute.delete(async(req, res) => {
         const netId = req.params.net_id
         const user = await User.findOneAndRemove({ netId })
 
-        const ret = user
-        ?   {
-                code: 200,
-                message: 'User Deleted Successfully',
-                success: true,
-            }
-        :   {
-                code: 404,
-                message: 'User Not Found',
-                success: false,
-            }
-        
+        const ret = user ? {
+            code: 200,
+            message: 'User Deleted Successfully',
+            success: true,
+        } : {
+            code: 404,
+            message: 'User Not Found',
+            success: false,
+        }
+
         res.json(ret)
     })
 
     // delete all users
-    usersRoute.delete(async (req, res) => {
+    usersRoute.delete(async(req, res) => {
         await User.deleteMany({})
         res.json({
             code: 200,
