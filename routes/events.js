@@ -33,6 +33,7 @@ module.exports = function(router) {
     eventsRoute.post(async(req, res) => {
 
         const data = req.body
+            // console.log("data in post:" + data.points)
         const eventKey = utils.generateEventKey()
         let errMsg = ''
 
@@ -65,10 +66,10 @@ module.exports = function(router) {
                 message: errMsg,
                 success: false,
             })
-        } else if (!utils.validatePassword(data.password)) {
+        } else if (!utils.validateUser(data.password)) {
             res.json({
                 code: 404,
-                message: 'Invalid Password',
+                message: 'You are not authorized to create events.',
                 success: false,
             })
         } else {
@@ -142,12 +143,16 @@ module.exports = function(router) {
     // check-in to event
     eventIdRoute.put(async(req, res) => {
         const data = req.body
-        const netId = data.netId
-        const key = data.key
-        const eventId = req.params.event_id
+            // console.log(data)
+        const netId = data.netid
+        const key = data.event_key
+        const eventId = data.event_id
+        const eventPoints = data.points
+            // console.log("point for this event:" + eventPoints)
 
         // invalid netid
         const isValid = utils.validateNetid(netId)
+            // const isValid = true;
         const event = await Event.findById(eventId)
 
         if (!isValid) {
@@ -183,7 +188,8 @@ module.exports = function(router) {
         } else {
             event.attendees.push(netId)
             await event.save()
-                // update user
+
+            // update user
             let user = await User.findOne({
                 netId: data.netId
             })
@@ -193,8 +199,11 @@ module.exports = function(router) {
                 })
                 user = newUser
             }
-            user.points += event.points
+
+
+            user.points += eventPoints
             await user.save()
+
             res.json({
                 code: 200,
                 message: 'Successfully Checked In',

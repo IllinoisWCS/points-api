@@ -3,12 +3,16 @@ const moment = require('moment')
 const twix = require('twix')
 
 const generateEventKey = () => {
-    i = Math.floor(Math.random() * 10);
-    j = Math.floor(Math.random() * 10);
-    return secrets.first_word[i] + ' ' + secrets.second_word[j];
+
+    var firstPart = (Math.random() * 46656) | 0;
+    var secondPart = (Math.random() * 46656) | 0;
+    firstPart = ("000" + firstPart.toString(36)).slice(-3);
+    secondPart = ("000" + secondPart.toString(36)).slice(-3);
+    return firstPart + secondPart;
 }
 
 const validateNetid = netid => {
+    console.log(netid)
     const re = new RegExp('\\b[a-z]+\\d{1,3}\\b');
     return re.test(netid);
 }
@@ -26,13 +30,13 @@ const validateTime = (event) => {
     return range.isCurrent()
 }
 
-const validatePassword = password => {
-    return password === secrets.pw 
+const validateUser = netid => {
+    return secrets.officers.indexOf(netid) > -1
 }
 
 module.exports = {
     generateEventKey,
     validateNetid,
     validateTime,
-    validatePassword,
+    validateUser,
 }

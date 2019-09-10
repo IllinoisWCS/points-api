@@ -1,4 +1,5 @@
 const { User } = require('../models')
+const { Event } = require('../models')
 const utils = require('../utils')
 
 module.exports = function(router) {
@@ -17,8 +18,12 @@ module.exports = function(router) {
 
     // get one user
     netIdRoute.get(async(req, res) => {
-        const netId = req.params.net_id
-        const user = await User.findOne({ netId })
+        const netid = req.params.net_id
+            // console.log("Inside User: " + req.params)
+        const user = await User.findOne({
+                netId: netid
+            })
+            // console.log("user found: " + user)
         res.json({
             code: 200,
             result: user,
@@ -30,6 +35,7 @@ module.exports = function(router) {
     usersRoute.post(async(req, res) => {
         const data = req.body
         const netId = data.netId
+            // console.log(data);
 
         if (!netId) {
             res.json({
@@ -68,44 +74,52 @@ module.exports = function(router) {
         const data = req.body
         const netId = req.params.net_id
         const user = await User.findOne({ netId })
-        let message = 'Already Signed In'
+        let message = 'Checked in!'
+            // console.log(data)
+            // console.log(netId)
 
         if (!user) {
             const newUser = new User({ netId });
             await newUser.save()
             user = newUser
         }
-
-        if (data.type === 'committee') {
-            if (!user.committees.includes(data.date)) {
-                user.committees.push(data.date)
-                user.points += 0.5
-                message = 'Successfully Added Committee'
-            }
-        } else if (data.type === 'officeHours') {
-            if (!user.officeHours.includes(data.date)) {
-                user.officeHours.push(data.date)
-                user.points += 0.5
-                message = 'Successfully Added Office Hour'
-            }
-        } else if (data.type === 'girlsWhoCode') {
-            if (!user.girlsWhoCode.includes(data.date)) {
-                user.girlsWhoCode.push(data.date)
-                user.points += 0.5
-                message = 'Successfully Added Girls Who Code'
-            }
-        } else if (data.type === 'attendedEvents') { // TODO: UPDATED CHECK!!
-            if (!user.attendedEvents.includes(data.date)) {
-                user.attendedEvents.push(data.date)
-                user.points += 0.5
-                message = 'Successfully Added Attended Event'
-            }
+        if (data.key) {
+            const event = await Event.findOne({ key: data.key })
+            user.points += event.points
+            user.attendedEvents.push(data.key)
         }
+
+        // if (data.type === 'committee') {
+        //     if (!user.committees.includes(data.date)) {
+        //         user.committees.push(data.date)
+        //         user.points += 0.5
+        //         message = 'Successfully Added Committee'
+        //     }
+        // } else if (data.type === 'officeHours') {
+        //     if (!user.officeHours.includes(data.date)) {
+        //         user.officeHours.push(data.date)
+        //         user.points += 0.5
+        //         message = 'Successfully Added Office Hour'
+        //     }
+        // } else if (data.type === 'girlsWhoCode') {
+        //     if (!user.girlsWhoCode.includes(data.date)) {
+        //         user.girlsWhoCode.push(data.date)
+        //         user.points += 0.5
+        //         message = 'Successfully Added Girls Who Code'
+        //     }
+        // } else if (data.type === 'attendedEvents') { // TODO: UPDATED CHECK!!
+        //     if (!user.attendedEvents.includes(data.date)) {
+        //         user.attendedEvents.push(data.date)
+        //         user.points += 0.5
+        //         message = 'Successfully Added Attended Event'
+        //     }
+        // }
 
         await user.save()
         res.json({
             code: 200,
-            message,
+            message: message,
+            result: user.attendedEvents,
             success: true,
         })
     })
