@@ -85,8 +85,11 @@ module.exports = function(router) {
         }
         if (data.key) {
             const event = await Event.findOne({ key: data.key })
-            user.points += event.points
-            user.attendedEvents.push(data.key)
+            if (user.attendedEvents.indexOf(data.key) <= -1) {
+                user.points += event.points
+                user.attendedEvents.push(data.key)
+
+            }
         }
 
         // if (data.type === 'committee') {

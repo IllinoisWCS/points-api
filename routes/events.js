@@ -147,14 +147,14 @@ module.exports = function(router) {
         const netId = data.netid
         const key = data.event_key
         const eventId = data.event_id
-        const eventPoints = data.points
+            // const eventPoints = data.points
             // console.log("point for this event:" + eventPoints)
 
         // invalid netid
         const isValid = utils.validateNetid(netId)
             // const isValid = true;
         const event = await Event.findById(eventId)
-
+            // console.log(utils.validateTime(event))
         if (!isValid) {
             res.json({
                 code: 404,
@@ -174,6 +174,7 @@ module.exports = function(router) {
                 success: false,
             })
         } else if (!utils.validateTime(event)) {
+            // console.log("WRONG TIME");
             res.json({
                 code: 404,
                 message: 'Event Not Running',
@@ -201,7 +202,7 @@ module.exports = function(router) {
             }
 
 
-            user.points += eventPoints
+            // user.points += eventPoints
             await user.save()
 
             res.json({
