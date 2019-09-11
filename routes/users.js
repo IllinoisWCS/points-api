@@ -104,17 +104,16 @@ module.exports = function(router) {
                 user = newUser
             }
             if (data.key) {
-                try {
-                    const event = await Event.findOne({ key: data.key })
-                    if (user.attendedEvents.includes(data.key)) {
-                        user.points += event.points
-                        user.attendedEvents.push(data.key)
 
-                    }
+                const event = await Event.findOne({ key: data.key })
+                if (user.attendedEvents.includes(data.key)) {
+                    user.points += event.points
+                    user.attendedEvents.push(data.key)
+                    console.log("inserted new event: ", user.points)
 
-                } catch (err) {
-                    console.log(err)
                 }
+
+
 
             }
 
