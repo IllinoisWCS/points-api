@@ -28,9 +28,8 @@ module.exports = function(router) {
             const netid = req.params.net_id
             console.log("Inside User get: ", req.params)
             const user = await User.findOne({
-                    netId: netid
-                })
-                // console.log("user found: " + user)
+                netId: netid
+            })
             res.json({
                 code: 200,
                 result: user,
