@@ -31,7 +31,7 @@ const validateTime = (event) => {
 }
 
 const validateUser = netid => {
-    return secrets.officers.indexOf(netid) > -1
+    return secrets.officers.includes(netid)
 }
 
 module.exports = {

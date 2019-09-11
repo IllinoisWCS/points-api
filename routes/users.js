@@ -104,7 +104,7 @@ module.exports = function(router) {
             }
             if (data.key) {
                 const event = await Event.findOne({ key: data.key })
-                if (user.attendedEvents.length > 0 && user.attendedEvents.indexOf(data.key) <= -1) {
+                if (user.attendedEvents.includes(data.key)) {
                     user.points += event.points
                     user.attendedEvents.push(data.key)
 
