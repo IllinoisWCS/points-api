@@ -32,7 +32,6 @@ const validateTime = (event) => {
 
 const validateUser = netid => {
 
-    console.log('secret', secrets)
     return secrets.officers.includes(netid)
 }
 
