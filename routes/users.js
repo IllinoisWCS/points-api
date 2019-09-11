@@ -26,7 +26,7 @@ module.exports = function(router) {
     netIdRoute.get(async(req, res) => {
         try {
             const netid = req.params.net_id
-                // console.log("Inside User: " + req.params)
+            console.log("Inside User get: ", req.params)
             const user = await User.findOne({
                     netId: netid
                 })
