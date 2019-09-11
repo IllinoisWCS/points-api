@@ -43,7 +43,7 @@ module.exports = function(router) {
     eventsRoute.post(async(req, res) => {
         try {
             const data = req.body
-            console.log("inside event post", data)
+                // console.log("inside event post", data)
             const eventKey = utils.generateEventKey()
             let errMsg = ''
 
