@@ -12,7 +12,6 @@ const generateEventKey = () => {
 }
 
 const validateNetid = netid => {
-    console.log(netid)
     const re = new RegExp('\\b[a-z]+\\d{1,3}\\b');
     return re.test(netid);
 }

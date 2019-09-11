@@ -91,6 +91,7 @@ module.exports = function(router) {
     netIdRoute.put(async(req, res) => {
         try {
             const data = req.body
+            console.log("inside user put", data)
             const netId = req.params.net_id
             const user = await User.findOne({ netId })
             let message = 'Checked in!'
@@ -103,39 +104,19 @@ module.exports = function(router) {
                 user = newUser
             }
             if (data.key) {
-                const event = await Event.findOne({ key: data.key })
-                if (user.attendedEvents.includes(data.key)) {
-                    user.points += event.points
-                    user.attendedEvents.push(data.key)
+                try {
+                    const event = await Event.findOne({ key: data.key })
+                    if (user.attendedEvents.includes(data.key)) {
+                        user.points += event.points
+                        user.attendedEvents.push(data.key)
 
+                    }
+
+                } catch (err) {
+                    console.log(err)
                 }
-            }
 
-            // if (data.type === 'committee') {
-            //     if (!user.committees.includes(data.date)) {
-            //         user.committees.push(data.date)
-            //         user.points += 0.5
-            //         message = 'Successfully Added Committee'
-            //     }
-            // } else if (data.type === 'officeHours') {
-            //     if (!user.officeHours.includes(data.date)) {
-            //         user.officeHours.push(data.date)
-            //         user.points += 0.5
-            //         message = 'Successfully Added Office Hour'
-            //     }
-            // } else if (data.type === 'girlsWhoCode') {
-            //     if (!user.girlsWhoCode.includes(data.date)) {
-            //         user.girlsWhoCode.push(data.date)
-            //         user.points += 0.5
-            //         message = 'Successfully Added Girls Who Code'
-            //     }
-            // } else if (data.type === 'attendedEvents') { // TODO: UPDATED CHECK!!
-            //     if (!user.attendedEvents.includes(data.date)) {
-            //         user.attendedEvents.push(data.date)
-            //         user.points += 0.5
-            //         message = 'Successfully Added Attended Event'
-            //     }
-            // }
+            }
 
             await user.save()
             res.json({

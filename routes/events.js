@@ -43,7 +43,7 @@ module.exports = function(router) {
     eventsRoute.post(async(req, res) => {
         try {
             const data = req.body
-            console.log("data in post:" + data.points)
+            console.log("inside event post", data)
             const eventKey = utils.generateEventKey()
             let errMsg = ''
 
@@ -208,19 +208,17 @@ module.exports = function(router) {
                 await event.save()
 
                 // update user
-                let user = await User.findOne({
-                    netId: data.netId
-                })
-                if (!user) {
-                    const newUser = new User({
-                        netId,
-                    })
-                    user = newUser
-                }
+                // let user = await User.findOne({
+                //     netId: data.netId
+                // })
+                // if (!user) {
+                //     const newUser = new User({
+                //         netId,
+                //     })
+                //     user = newUser
+                // }
 
-
-                // user.points += eventPoints
-                await user.save()
+                // await user.save()
 
                 res.json({
                     code: 200,
