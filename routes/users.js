@@ -92,7 +92,7 @@ module.exports = function(router) {
             const data = req.body
             console.log("inside user put", data)
             const netid = req.params.net_id
-            const user = await User.findOne({ netId: netid })
+            let user = await User.findOne({ netId: netid })
             let message = 'Checked in!'
                 // console.log(data)
                 // console.log(netId)
@@ -104,7 +104,7 @@ module.exports = function(router) {
             if (data.key) {
 
                 const event = await Event.findOne({ key: data.key })
-                conso
+
                 if (!user.attendedEvents.includes(data.key)) {
                     user.points += event.points
                     user.attendedEvents.push(data.key)
