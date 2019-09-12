@@ -91,20 +91,20 @@ module.exports = function(router) {
         try {
             const data = req.body
             console.log("inside user put", data)
-            const netId = req.params.net_id
-            const user = await User.findOne({ netId })
+            const netid = req.params.net_id
+            const user = await User.findOne({ netId: netid })
             let message = 'Checked in!'
                 // console.log(data)
                 // console.log(netId)
-
             if (!user) {
-                const newUser = new User({ netId });
-                await newUser.save()
-                user = newUser
+                user = new User({ netId: netid });
+
+                // user = newUser
             }
             if (data.key) {
 
                 const event = await Event.findOne({ key: data.key })
+                conso
                 if (!user.attendedEvents.includes(data.key)) {
                     user.points += event.points
                     user.attendedEvents.push(data.key)
@@ -112,7 +112,6 @@ module.exports = function(router) {
 
                 }
             }
-
             await user.save()
             res.json({
                 code: 200,
