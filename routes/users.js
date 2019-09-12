@@ -108,7 +108,7 @@ module.exports = function(router) {
                 if (!user.attendedEvents.includes(data.key)) {
                     user.points += event.points
                     user.attendedEvents.push(data.key)
-                        // console.log("inserted new event: ", user.points)
+                    console.log("inserted new event: ", user.points)
 
                 }
             }
