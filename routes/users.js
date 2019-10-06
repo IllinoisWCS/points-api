@@ -46,7 +46,7 @@ module.exports = function(router) {
     usersRoute.post(async(req, res) => {
         try {
             const data = req.body
-            const netId = data.netId
+            const netId = data.netId.toLowerCase()
                 // console.log(data);
 
             if (!netId) {

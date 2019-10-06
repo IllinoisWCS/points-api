@@ -161,7 +161,7 @@ module.exports = function(router) {
         try {
             const data = req.body
                 // console.log(data)
-            const netId = data.netid
+            const netId = data.netid.toLowerCase()
             const key = data.event_key
             const eventId = data.event_id
                 // const eventPoints = data.points
@@ -190,14 +190,16 @@ module.exports = function(router) {
                     message: 'Invalid Event Key',
                     success: false,
                 })
-            } /*else if (!utils.validateTime(event)) {
-                // console.log("WRONG TIME");
-                res.json({
-                    code: 404,
-                    message: 'Event Not Running',
-                    success: false,
-                })
-            } */else if (event.attendees.includes(netId)) {
+            }
+            /*else if (!utils.validateTime(event)) {
+                           // console.log("WRONG TIME");
+                           res.json({
+                               code: 404,
+                               message: 'Event Not Running',
+                               success: false,
+                           })
+                       } */
+            else if (event.attendees.includes(netId)) {
                 res.json({
                     code: 200,
                     message: 'Already Signed In',
