@@ -104,21 +104,34 @@ module.exports = function(router) {
             if (data.key) {
 
                 const event = await Event.findOne({ key: data.key })
+                console.log(event);
+                if (event != null) {
+                    if (!user.attendedEvents.includes(data.key)) {
+                        user.points += event.points
+                        user.attendedEvents.push(data.key)
+                        console.log("inserted new event: ", user.points)
 
-                if (!user.attendedEvents.includes(data.key)) {
-                    user.points += event.points
-                    user.attendedEvents.push(data.key)
-                    console.log("inserted new event: ", user.points)
-
+                    }
+                } else {
+                    res.json({
+                        code: 400,
+                        message: "Event doesn't exist",
+                        result: user,
+                        success: false,
+                    })
                 }
+
             }
             await user.save()
+
             res.json({
                 code: 200,
                 message: message,
                 result: user.attendedEvents,
                 success: true,
             })
+
+
 
         } catch (err) {
             console.log(err)
