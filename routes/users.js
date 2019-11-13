@@ -105,12 +105,14 @@ module.exports = function(router) {
 
                 const event = await Event.findOne({ key: data.key })
                 console.log(event);
+                console.log(event.attendees)
                 if (event != null) {
                     if (!user.attendedEvents.includes(data.key)) {
                         user.points += event.points
                         user.attendedEvents.push(data.key)
                         console.log("inserted new event: ", user.points)
-
+                        event.attendees.push(user.netId)
+                        await event.save()
                     }
                 } else {
                     res.json({
