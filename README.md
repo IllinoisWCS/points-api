@@ -16,17 +16,19 @@ It will start up on [localhost:3000](localhost:3000). You can then make API call
 
 There are four routes: `events`, `users`, `events/:id`, `users/:id`. The first two calls are used for getting information about all the events or users that exist in the database. For details about a specific event or user, use the last two calls.
 
-### List all WCS events
+### Get WCS events
+
+If no query string is passed, all WCS events are returned:
 
 ```
-GET events
+GET /api/events
 ```
 #### Response
 
 ```
 {
-    "message": "OK",
-    "data": [
+    "code": 200,
+    "result": [
         {
             "_id": "id_string",
             "name": "event_name",
@@ -39,11 +41,58 @@ GET events
                 "user2"
             ],
             "date": "2018-09-06T00:00:00.000Z",
-            "expiration": "2018-09-06T02:00:00.000Z",
-            "dateCreated": "2018-09-12T20:32:44.438Z"
+            "startTime": "2018-09-06T02:00:00.000Z",
+            "endTime": "2018-09-12T20:32:44.438Z"
         }
 }
 ```
+
+Supported query string params:
+
+- event_keys - an array of event keys, in the form of a comma separated string, for the events we are querying
+
+```
+GET /api/events?event_keys=key_1,key_2[&...]
+```
+#### Response
+
+```
+{
+    "code": 200,
+    "result": [
+        {
+            "_id": "id_string",
+            "name": "event_name",
+            "points": 1,
+            "__v": 3,
+            "key": "key_1",
+            "category": "event_category",
+            "attendees": [
+                "user1",
+                "user2"
+            ],
+            "date": "2018-09-06T00:00:00.000Z",
+            "startTime": "2018-09-06T02:00:00.000Z",
+            "endTime": "2018-09-12T20:32:44.438Z"
+        },
+        {
+            "_id": "id_string",
+            "name": "event_name",
+            "points": 1,
+            "__v": 3,
+            "key": "key_2",
+            "category": "event_category",
+            "attendees": [
+                "user1",
+                "user2"
+            ],
+            "date": "2018-09-06T00:00:00.000Z",
+            "startTime": "2018-09-06T02:00:00.000Z",
+            "endTime": "2018-09-12T20:32:44.438Z"
+        }
+}
+```
+
 ### Create an Event
 Make a new Event object in the database. `name`, `points`, `date`, `category`, and `password` must be sent in the request body. Upon submitting the request, the system will generate a random passphrase that will be set as the `key`. An `expiration` will also be automatically set to 2 hours after the event start time.
 ```
@@ -118,64 +167,51 @@ PUT events/:id
     }
 }
 ```
-### List all active WCS members
+### Get all active WCS members
 
 Active membership (in the API) is considered as anyone who has signed in to an event that school year. The officer password must be sent with the request.
 
 ```
-GET users
+GET /api/users
 ```
 #### Response
 ```
 {
-    "message": "OK",
-    "data": [
+    "code": 200,
+    "result": [
         {
             "_id": "id_string",
             "netid": "user1",
             "points": 8,
             "__v": 0,
-            "committees": [],
-            "office_hours": []
-        }
+            "attendedEvents": [
+                "event_key_1",
+                "event_key_2",
+                ...
+            ],
+        },
+        ...
 }
 ```
-### Getting data about a specific member
-The `:id` parameter must be passed through the API call's url. This is the `netid` associated with each User object.
+### Get a specific WCS member using netid
+The `:net_id` parameter must be passed through the API call's url. This is the `netid` associated with each User object.
 ```
-GET users/:id
+GET /api/users/:net_id
 ```
 #### Response
 ```
 {
-    "message": "OK",
-    "data": {
+    "code": 200,
+    "result": {
+        "_id": "id_string",
+        "netid": "user1",
+        "__v": 0,
         "points": 3,
         "attended_events": [
-            {
-                "_id": "id_string",
-                "name": "event_name",
-                "points": 1,
-                "category": "event_category",
-                "__v": 42,
-                "attendees": [
-                    "user1",
-                    "user2",
-                    "user3"
-                ],
-                "expiration": "2018-12-11T04:31:53.951Z",
-                "date": "2018-10-29T00:00:00.000Z",
-                "dateCreated": "2018-10-28T19:07:06.065Z"
-            }
+            "event_key_1",
+            "event_key_2",
+            ...
         ],
-        "committees": [
-            "Nov 6, 2018"
-        ],
-        "office_hours": [
-            "Sep 18, 2018",
-            "Oct 8, 2018",
-            "Nov 6, 2018"
-        ]
     }
 }
 ```
