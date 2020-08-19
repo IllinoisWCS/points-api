@@ -2,23 +2,52 @@ const {
     Event,
     User
 } = require('../models')
-const utils = require('../utils')
+const utils = require('../utils');
+const event = require('../models/event');
 
 module.exports = function(router) {
     const eventsRoute = router.route('/events');
     const eventIdRoute = router.route('/events/:event_id')
 
-    // get all events
     eventsRoute.get(async(req, res) => {
-        try {
-            const events = await Event.find({});
-            res.json({
-                code: 200,
-                result: events,
-                success: true,
-            });
-        } catch (err) {
-            console.log(err)
+        const queryObject = req.query;
+        if (Object.keys(queryObject).length === 0) { // get all events
+            try {
+                const events = await Event.find({});
+                res.json({
+                    code: 200,
+                    result: events,
+                    success: true,
+                });
+            } catch (err) {
+                // console.log(err);
+                res.json({
+                    code: 500,
+                    result: {},
+                    success: false,
+                })
+            }
+        } else { // get events using query filters
+            const filterQuery = {};
+            if ("event_keys" in queryObject) {
+                const keysArray = queryObject.event_keys.split(',');
+                filterQuery['key'] = {$in: keysArray};
+            }
+
+            const events = await Event.find(filterQuery);
+            try {
+                res.json({
+                    code: 200,
+                    result: events,
+                    success: true,
+                })
+            } catch (err) {
+                res.json({
+                    code: 500,
+                    result: {},
+                    success: false,
+                })
+            }
         }
     })
 
@@ -36,7 +65,6 @@ module.exports = function(router) {
         } catch (err) {
             console.log(err)
         }
-
     })
 
     // create new event
@@ -105,8 +133,6 @@ module.exports = function(router) {
         } catch (err) {
             console.log(err)
         }
-
-
     })
 
     // update an event
@@ -273,7 +299,6 @@ module.exports = function(router) {
             message: 'Events Deleted Successfully',
             success: true,
         })
-
     })
 
     return router
