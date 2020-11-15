@@ -24,9 +24,10 @@
     "express": "^4.15.3",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
-    "mongoose": "^4.10.0",
-    "nodemon": "^1.18.10",
-    "npm": "^6.14.7",
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.10.14",
+    "nodemon": "^2.0.6",
+    "npm": "^7.0.11",
     "twix": "^1.2.1"
   }
 }
