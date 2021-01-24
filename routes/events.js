@@ -70,8 +70,9 @@ module.exports = function(router) {
     // create new event
     eventsRoute.post(async(req, res) => {
         try {
-            const data = req.body
-                // console.log("inside event post", data)
+            const data = req.body;
+            // Note: console.log() log to terminal
+            // console.log("inside event post", data)
             const eventKey = utils.generateEventKey()
             let errMsg = ''
 
@@ -111,7 +112,6 @@ module.exports = function(router) {
                     success: false,
                 })
             } else {
-
                 const newEvent = new Event({
                     name: data.name,
                     points: data.points,
@@ -120,6 +120,7 @@ module.exports = function(router) {
                     date: data.date,
                     startTime: data.startTime,
                     endTime: data.endTime,
+                    private: data.private,
                 });
                 await newEvent.save()
                 res.json({

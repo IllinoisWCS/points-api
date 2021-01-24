@@ -19,6 +19,7 @@ var EventSchema = new mongoose.Schema(
     startTime: { type: String, required: true},
     endTime: { type: String, required: true },
     attendees: { type: Array, default: [] },
+    private: { type: Boolean, default: false },
   },
   { usePushEach: true }
 );
