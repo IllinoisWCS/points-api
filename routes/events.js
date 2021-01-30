@@ -85,11 +85,14 @@ module.exports = function(router) {
             if (!data.category) {
                 errMsg += 'Category, '
             }
-            if (!data.date) {
-                errMsg += 'Date, '
+            if (!data.startDate) {
+                errMsg += 'Start Date, '
             }
             if (!data.startTime) {
                 errMsg += 'Start Time, '
+            }
+            if (!data.endDate) {
+                errMsg += 'End Date, '
             }
             if (!data.endTime) {
                 errMsg += 'End Time, '
@@ -117,8 +120,9 @@ module.exports = function(router) {
                     points: data.points,
                     category: data.category,
                     key: eventKey,
-                    date: data.date,
+                    startDate: data.startDate,
                     startTime: data.startTime,
+                    endDate: data.endDate,
                     endTime: data.endTime,
                     private: data.private,
                 });

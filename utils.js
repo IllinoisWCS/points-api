@@ -16,16 +16,15 @@ const validateNetid = netid => {
     return re.test(netid);
 }
 
+/*
+*    IMPORTANT: this function is currently not in use and may not work correctly
+*/
 const validateTime = (event) => {
-    // checking if correct day
-    const curDate = moment().format('YYYY-MM-DD')
-    const eventDate = moment(event.date).format('YYYY-MM-DD')
-    if (curDate !== eventDate) {
-        return false
-    }
-
+    const startDate = moment(event.startDate).format('YYYY-MM-DD')
+    const endDate = moment(event.endDate).format('YYYY-MM-DD')
+    
     // checking if w/in time range
-    const range = moment(`${eventDate} ${event.startTime}`).twix(`${eventDate} ${event.endTime}`);
+    const range = moment(`${startDate} ${event.startTime}`).twix(`${endDate} ${event.endTime}`);
     return range.isCurrent()
 }
 
