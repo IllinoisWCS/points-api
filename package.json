@@ -23,7 +23,7 @@
     "cors": "^2.8.5",
     "express": "^4.15.3",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.23",
+    "moment-timezone": "^0.5.35",
     "mongodb": "^3.6.3",
     "mongoose": "^5.10.14",
     "nodemon": "^2.0.6",
