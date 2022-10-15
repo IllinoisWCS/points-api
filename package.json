@@ -1,0 +1,29 @@
+{
+  "name": "wcs-points-api",
+  "version": "0.1.0",
+  "main": "server.js",
+  "repository": "https://github.com/IllinoisWCS/wcs-points-api",
+  "author": "IllinoisWCS",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.6.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": ">=6",
+    "lint-staged": ">=10",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.7.1"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "dev": "nodemon -r dotenv/config"
+  }
+}
