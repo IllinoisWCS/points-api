@@ -9,7 +9,7 @@ router.get("/:netId", async (req, res, next) => {
     if (err) return next(err);
 
     if (result) {
-      res.status(200).send(result);
+      res.status(200).send({ result: result });
     } else {
       res.sendStatus(404);
     }
