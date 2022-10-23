@@ -7,7 +7,7 @@ const router = express.Router();
 const nanoid = customAlphabet("123456789abcdefghijkmnopqrstuvwxyz", 6);
 
 router.get("/", async (req, res, next) => {
-  Event.find({}, function (err, result) {
+  Event.find({ private: false }, function (err, result) {
     if (err) return next(err);
     res.status(200).send(result);
   });
