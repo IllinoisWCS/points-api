@@ -1,19 +1,26 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-var EventSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    points: { type: Number, required: true },
-    category: { type: String, required: true },
-    key: { type: String, required: true },
-    startDate: { type: String, required: true },
-    startTime: { type: String, required: true },
-    endDate: { type: String, required: true },
-    endTime: { type: String, required: true },
-    attendees: { type: Array, default: [] },
-    private: { type: Boolean, default: false },
+const EventSchema = new mongoose.Schema({
+  key: { type: String, immutable: true, required: true, unique: true },
+  name: { type: String, required: true },
+  category: {
+    type: String,
+    enum: [
+      "corporate",
+      "social",
+      "outreach",
+      "mentoring",
+      "techTeam",
+      "generalMeeting",
+      "growth",
+      "other",
+    ],
+    required: true,
   },
-  { usePushEach: true }
-);
+  points: { type: Number, minimum: 0, required: true },
+  start: { type: Date, required: true },
+  end: { type: Date, required: true },
+  private: { type: Boolean, default: false },
+});
 
 module.exports = mongoose.model("Event", EventSchema);
