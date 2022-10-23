@@ -7,14 +7,9 @@ const router = express.Router();
 const nanoid = customAlphabet("123456789abcdefghijkmnopqrstuvwxyz", 6);
 
 router.get("/", async (req, res, next) => {
-  let query;
-  if (req.query.event_keys) {
-    const eventKeys = req.query.event_keys.split(",");
-    query = { key: { $in: eventKeys } };
-  }
-  Event.find(query, function (err, result) {
+  Event.find({}, function (err, result) {
     if (err) return next(err);
-    res.status(200).send({ result: result });
+    res.status(200).send(result);
   });
 });
 
