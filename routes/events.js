@@ -27,7 +27,6 @@ router.post("/", isOfficer, async (req, res, next) => {
   event.save(function (err) {
     if (err) return next(err);
     res.status(200).send({
-      code: 200,
       message: "Event created successfully",
       result: eventKey,
     });
