@@ -39,36 +39,4 @@ router.post("/", isOfficer, async (req, res, next) => {
   });
 });
 
-router.put("/:eventId", async (req, res, next) => {
-  if (!req.body.netid) {
-    return res.status(400).send({ message: "Invalid NetID" });
-  }
-
-  const event = await Event.findOne({ key: req.body.event_key });
-
-  if (!event) {
-    return res.status(400).send({ message: "Invalid event key" });
-  }
-
-  Event.findOneAndUpdate(
-    {
-      _id: req.params.eventId,
-      key: req.body.event_key,
-      attendees: { $ne: req.body.netid.toLowerCase() },
-    },
-    {
-      $addToSet: { attendees: req.body.netid.toLowerCase() },
-    },
-    function (err, result) {
-      if (err) return next(err);
-
-      if (result) {
-        res.status(200).send({ message: "User checked in successfully" });
-      } else {
-        res.status(400).send({ message: "User already checked in" });
-      }
-    }
-  );
-});
-
 module.exports = router;
