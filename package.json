@@ -1,7 +1,7 @@
 {
   "name": "wcs-points-api",
   "version": "0.1.0",
-  "main": "server.js",
+  "main": "src/server.js",
   "repository": "https://github.com/IllinoisWCS/wcs-points-api",
   "author": "IllinoisWCS",
   "license": "MIT",
