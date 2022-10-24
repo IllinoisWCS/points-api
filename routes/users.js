@@ -1,8 +1,6 @@
-const express = require("express");
+const router = require("express").Router();
 const User = require("../models/user");
 const Event = require("../models/event");
-
-const router = express.Router();
 
 router.get("/:netId", async (req, res, next) => {
   User.findOne({ netId: req.params.netId })

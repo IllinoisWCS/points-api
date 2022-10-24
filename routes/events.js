@@ -1,9 +1,8 @@
-const express = require("express");
+const router = require("express").Router();
 const { customAlphabet } = require("nanoid");
 const Event = require("../models/event");
 const isOfficer = require("../middlewares/isOfficer");
 
-const router = express.Router();
 const nanoid = customAlphabet("123456789abcdefghijkmnopqrstuvwxyz", 6);
 
 router.get("/", async (req, res, next) => {

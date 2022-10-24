@@ -1,5 +1,4 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 
 router.use("/events", require("./events"));
 router.use("/users", require("./users"));
