@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { customAlphabet } = require("nanoid");
-const Event = require("../models/event");
 const isOfficer = require("../middlewares/isOfficer");
+const Event = require("../models/event");
 
 const nanoid = customAlphabet("123456789abcdefghijkmnopqrstuvwxyz", 6);
 

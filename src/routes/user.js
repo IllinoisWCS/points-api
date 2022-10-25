@@ -2,8 +2,8 @@ const router = require("express").Router();
 const User = require("../models/user");
 const Event = require("../models/event");
 
-router.get("/:netId", async (req, res, next) => {
-  User.findOne({ netId: req.params.netId })
+router.get("/", async (req, res, next) => {
+  User.findById(req.user._id)
     .populate("events")
     .exec(function (err, result) {
       if (err) return next(err);
@@ -16,7 +16,7 @@ router.get("/:netId", async (req, res, next) => {
     });
 });
 
-router.put("/:netId", async (req, res, next) => {
+router.put("/", async (req, res, next) => {
   const event = await Event.findOne({ key: req.body.eventKey });
 
   if (!event) {
@@ -24,15 +24,15 @@ router.put("/:netId", async (req, res, next) => {
   }
 
   User.findOneAndUpdate(
-    { netId: req.params.netId, events: { $ne: event._id } },
+    { _id: req.user._id, events: { $ne: event._id } },
     { $push: { events: event._id }, $inc: { points: event.points } },
     function (err, result) {
       if (err) return next(err);
 
       if (result) {
-        res.status(200).send({ message: "User checked in successfully" });
+        res.status(200).send({ message: "Checked in successfully" });
       } else {
-        res.status(400).send({ message: "User already checked in" });
+        res.status(400).send({ message: "Already checked in" });
       }
     }
   );

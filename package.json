@@ -6,10 +6,15 @@
   "author": "IllinoisWCS",
   "license": "MIT",
   "dependencies": {
+    "connect-mongo": "^4.6.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "mongoose": "^6.6.5",
-    "nanoid": "3"
+    "nanoid": "3",
+    "passport": "^0.6.0",
+    "passport-custom": "^1.1.1"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",

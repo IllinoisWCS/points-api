@@ -1,6 +1,5 @@
 module.exports = function (req, res, next) {
-  const officers = JSON.parse(process.env.OFFICERS);
-  if (!officers.includes(req.body.password)) {
+  if (req.user.role !== "officer") {
     return res.sendStatus(403);
   }
   next();
