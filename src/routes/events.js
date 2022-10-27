@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { customAlphabet } = require("nanoid");
+const isAuthenticated = require("../middlewares/isAuthenticated");
 const isOfficer = require("../middlewares/isOfficer");
 const Event = require("../models/event");
 
@@ -12,7 +13,7 @@ router.get("/", async (req, res, next) => {
   });
 });
 
-router.post("/", isOfficer, async (req, res, next) => {
+router.post("/", isAuthenticated, isOfficer, async (req, res, next) => {
   const eventKey = nanoid();
 
   const event = new Event({
