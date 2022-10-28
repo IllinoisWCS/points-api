@@ -44,4 +44,20 @@ router.delete("/:netId", async (req, res, next) => {
   });
 });
 
+router.patch("/:netId", async (req, res, next) => {
+  User.findOneAndUpdate(
+    { netId: req.params.netId },
+    { ...req.body },
+    function (err, result) {
+      if (err) return next(err);
+
+      if (result) {
+        res.status(200).send(result);
+      } else {
+        res.sendStatus(404);
+      }
+    }
+  );
+});
+
 module.exports = router;
