@@ -37,7 +37,7 @@ router.delete("/:netId", async (req, res, next) => {
     if (err) return next(err);
 
     if (result) {
-      res.status(200).send(result);
+      res.sendStatus(200);
     } else {
       res.sendStatus(404);
     }
@@ -52,7 +52,7 @@ router.patch("/:netId", async (req, res, next) => {
       if (err) return next(err);
 
       if (result) {
-        res.status(200).send(result);
+        res.sendStatus(200);
       } else {
         res.sendStatus(404);
       }
