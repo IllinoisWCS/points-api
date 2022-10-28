@@ -42,9 +42,14 @@ router.post("/", isAuthenticated, isOfficer, async (req, res, next) => {
 });
 
 router.delete("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
-  Event.findOneAndDelete({ _id: req.params.id }, function (err) {
+  Event.findOneAndDelete({ _id: req.params.id }, function (err, result) {
     if (err) return next(err);
-    res.sendStatus(200);
+
+    if (result) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   });
 });
 
@@ -52,9 +57,14 @@ router.patch("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
   Event.findOneAndUpdate(
     { _id: req.params.id },
     { ...req.body },
-    function (err) {
+    function (err, result) {
       if (err) return next(err);
-      res.sendStatus(200);
+
+      if (result) {
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(404);
+      }
     }
   );
 });
