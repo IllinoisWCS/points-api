@@ -48,4 +48,15 @@ router.delete("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
   });
 });
 
+router.put("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
+  Event.findOneAndUpdate(
+    { _id: req.params.id },
+    { ...req.body },
+    function (err, result) {
+      if (err) return next(err);
+      res.status(200).send(result);
+    }
+  );
+});
+
 module.exports = router;
