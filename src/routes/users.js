@@ -29,4 +29,19 @@ router.get("/:netId", async (req, res, next) => {
     });
 });
 
+router.delete("/:netId", async (req, res, next) => {
+  User.findOneAndDelete({ netId: req.params.netId }).exec(function (
+    err,
+    result
+  ) {
+    if (err) return next(err);
+
+    if (result) {
+      res.status(200).send(result);
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
 module.exports = router;
