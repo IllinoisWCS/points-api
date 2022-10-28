@@ -8,12 +8,14 @@ const nanoid = customAlphabet("123456789abcdefghijkmnopqrstuvwxyz", 6);
 
 router.get("/", async (req, res, next) => {
   let query = {};
+  let projection = ["-__v"];
 
   if (!req.user || req.user.role !== "officer") {
     query = { private: false };
+    projection.push("-key");
   }
 
-  Event.find(query, function (err, result) {
+  Event.find(query, projection, function (err, result) {
     if (err) return next(err);
     res.status(200).send(result);
   });
