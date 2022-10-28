@@ -48,7 +48,7 @@ router.delete("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
   });
 });
 
-router.put("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
+router.patch("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
   Event.findOneAndUpdate(
     { _id: req.params.id },
     { ...req.body },
