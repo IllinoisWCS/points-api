@@ -16,7 +16,7 @@ router.get("/", async (req, res, next) => {
     });
 });
 
-router.put("/", async (req, res, next) => {
+router.patch("/", async (req, res, next) => {
   const event = await Event.findOne({ key: req.body.eventKey });
 
   if (!event) {
