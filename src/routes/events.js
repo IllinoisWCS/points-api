@@ -7,8 +7,13 @@ const Event = require("../models/event");
 const nanoid = customAlphabet("123456789abcdefghijkmnopqrstuvwxyz", 6);
 
 router.get("/", async (req, res, next) => {
-  const private = !!req.user && req.user.role === "officer";
-  Event.find({ private: private }, function (err, result) {
+  let query = {};
+
+  if (!req.user || req.user.role !== "officer") {
+    query = { private: false };
+  }
+
+  Event.find(query, function (err, result) {
     if (err) return next(err);
     res.status(200).send(result);
   });
