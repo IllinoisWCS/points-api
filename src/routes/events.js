@@ -41,4 +41,11 @@ router.post("/", isAuthenticated, isOfficer, async (req, res, next) => {
   });
 });
 
+router.delete("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
+  Event.findOneAndDelete({ _id: req.params.id }, function (err, result) {
+    if (err) return next(err);
+    res.status(200).send(result);
+  });
+});
+
 module.exports = router;
