@@ -5,8 +5,15 @@ const User = require("../models/user");
 
 passport.use(
   new CustomStrategy(function (req, done) {
-    const netId = req.header("uid");
-    const displayName = req.header("displayName");
+    let netId, displayName;
+
+    if (process.env.NODE_ENV === "development") {
+      netId = "dev";
+      displayName = "Dev User";
+    } else {
+      netId = req.header("uid");
+      displayName = req.header("displayName");
+    }
 
     User.findOneAndUpdate(
       { netId: netId },
