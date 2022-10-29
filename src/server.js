@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use(cookieParser());
 app.use(
   cors({
-    origin: true,
+    origin: process.env.BASE_URL,
     credentials: true,
   })
 );
