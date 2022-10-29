@@ -15,10 +15,12 @@ router.get("/", async (req, res, next) => {
     projection.push("-key");
   }
 
-  Event.find(query, projection, function (err, result) {
-    if (err) return next(err);
-    res.status(200).send(result);
-  });
+  Event.find(query, projection)
+    .sort({ start: -1 })
+    .exec(function (err, result) {
+      if (err) return next(err);
+      res.status(200).send(result);
+    });
 });
 
 router.post("/", isAuthenticated, isOfficer, async (req, res, next) => {
