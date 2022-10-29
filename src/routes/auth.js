@@ -34,7 +34,7 @@ passport.deserializeUser(function (user, done) {
 });
 
 router.get("/login", passport.authenticate("custom"), function (req, res) {
-  return res.status(200).send(req.user);
+  return res.redirect(process.env.BASE_URL);
 });
 
 router.post("/logout", function (req, res, next) {
