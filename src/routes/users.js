@@ -3,7 +3,7 @@ const User = require("../models/user");
 
 router.get("/", async (req, res, next) => {
   User.find({})
-    .populate("events")
+    .populate({ path: "events", options: { sort: { start: -1 } } })
     .exec(function (err, result) {
       if (err) return next(err);
 
@@ -17,7 +17,7 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:netId", async (req, res, next) => {
   User.find({ netId: req.params.netId })
-    .populate("events")
+    .populate({ path: "events", options: { sort: { start: -1 } } })
     .exec(function (err, result) {
       if (err) return next(err);
 
