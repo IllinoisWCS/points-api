@@ -4,7 +4,7 @@ const Event = require("../models/event");
 
 router.get("/", async (req, res, next) => {
   User.findById(req.user._id)
-    .populate("events")
+    .populate({ path: "events", options: { sort: { start: -1 } } })
     .exec(function (err, result) {
       if (err) return next(err);
 
