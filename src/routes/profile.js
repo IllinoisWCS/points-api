@@ -23,6 +23,10 @@ router.patch("/", async (req, res, next) => {
     return res.status(400).send({ message: "Invalid event key" });
   }
 
+  if (new Date() - event.end > process.env.CHECK_IN_GRACE_PERIOD) {
+    return res.status(400).send({ message: "Event not active" });
+  }
+
   User.findOneAndUpdate(
     { _id: req.user._id, events: { $ne: event._id } },
     { $push: { events: event._id }, $inc: { points: event.points } },
