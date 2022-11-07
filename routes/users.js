@@ -82,6 +82,28 @@ module.exports = function (router) {
 
   // update user committee, oh, gwc
   netIdRoute.put(async (req, res) => {
+    if (req.body.has("points")) {
+      try {
+        let user = await User.findOne({ netId: req.params.net_id });
+        user.points = req.params.points;
+        res.json({
+          code: 200,
+          message: 'yay',
+          result: 'yay',
+          success: true,
+        });
+        await user.save();
+      } catch (e) {
+        res.json({
+          code: 400,
+          message: "Event doesn't exist",
+          result: "boo",
+          success: false,
+        });
+      }
+      return;
+    }
+
     try {
       const data = req.body;
       console.log("inside user put", data);
@@ -128,10 +150,6 @@ module.exports = function (router) {
       console.log(err);
     }
   });
-
-  const updateUserPoints = async () => {
-
-  }
 
   // delete user
   netIdRoute.delete(async (req, res) => {
