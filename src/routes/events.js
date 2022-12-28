@@ -10,7 +10,7 @@ router.get("/", async (req, res, next) => {
   let query = {};
   let projection = ["-__v"];
 
-  if (!req.user || req.user.role !== "officer") {
+  if (!req.user || !req.user.isOfficer) {
     query = { private: false };
     projection.push("-key");
   }
