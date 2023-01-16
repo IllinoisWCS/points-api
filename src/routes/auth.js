@@ -14,6 +14,7 @@ const samlPrivateKey = fs.readFileSync("shibboleth/sp-key.pem", "utf8");
 passport.use(
   new SamlStrategy(
     {
+      protocol: process.env.NODE_ENV === "development" ? "http" : "https",
       path: "/auth/callback",
       entryPoint:
         "https://shibboleth.illinois.edu/idp/profile/SAML2/Redirect/SSO",
