@@ -26,14 +26,25 @@ passport.use(
       identifierFormat: null,
     },
     function (profile, done) {
-      done(null, profile);
+      const displayName = profile.attributes[DISPLAY_NAME_ATTRIBUTE];
+      const netId = profile.attributes[UID_ATTRIBUTE];
+
+      User.findOneAndUpdate(
+        { netId: netId },
+        { $set: { name: displayName } },
+        { upsert: true, new: true },
+        function (err, result) {
+          if (err) return done(err);
+          return done(null, result);
+        }
+      );
     }
   )
 );
 
 passport.serializeUser(function (user, done) {
   process.nextTick(function () {
-    done(null, { _id: user._id, netId: user.netId, isOfficer: user.isOfficer });
+    done(null, { _id: user._id, netId: user.netId });
   });
 });
 
@@ -49,19 +60,7 @@ router.post(
   "/callback",
   bodyParser.urlencoded({ extended: false }),
   passport.authenticate("saml"),
-  function (req, res, next) {
-    const displayName = req.user.attributes[DISPLAY_NAME_ATTRIBUTE];
-    const netId = req.user.attributes[UID_ATTRIBUTE];
-
-    User.findOneAndUpdate(
-      { netId: netId },
-      { $set: { name: displayName } },
-      { upsert: true, new: true },
-      function (err) {
-        if (err) return next(err);
-      }
-    );
-
+  function (_req, res) {
     return res.redirect(process.env.BASE_URL);
   }
 );
