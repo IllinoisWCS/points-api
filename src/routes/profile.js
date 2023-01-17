@@ -34,9 +34,11 @@ router.patch("/", async (req, res, next) => {
       if (err) return next(err);
 
       if (result) {
-        res.status(200).send({ message: "Checked in successfully" });
+        res
+          .status(200)
+          .send({ message: "Checked in successfully", event: event });
       } else {
-        res.status(400).send({ message: "Already checked in" });
+        res.status(400).send({ message: "Already checked in", event: event });
       }
     }
   );
