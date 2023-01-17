@@ -1,8 +1,5 @@
-const User = require("../models/user");
-
-module.exports = async function (req, res, next) {
-  const user = await User.findById(req.user._id);
-  if (!user.isOfficer) {
+module.exports = function (req, res, next) {
+  if (req.user.role !== "officer") {
     return res.sendStatus(403);
   }
   next();

@@ -44,7 +44,7 @@ passport.use(
 
 passport.serializeUser(function (user, done) {
   process.nextTick(function () {
-    done(null, { _id: user._id, netId: user.netId });
+    done(null, { _id: user._id, netId: user.netId, role: user.role });
   });
 });
 
