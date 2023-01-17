@@ -2,7 +2,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const router = require("express").Router();
 const passport = require("passport");
-const SamlStrategy = require("passport-saml").Strategy;
+const SamlStrategy = require("@node-saml/passport-saml").Strategy;
 const User = require("../models/user");
 
 const DISPLAY_NAME_ATTRIBUTE = "urn:oid:2.16.840.1.113730.3.1.241";
