@@ -8,6 +8,11 @@ const session = require("express-session");
 
 const app = express();
 
+// Suppresses deprecation warning
+// Remove after upgrading to Mongoose 7
+// https://github.com/Automattic/mongoose/issues/11861
+mongoose.set("strictQuery", false);
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
