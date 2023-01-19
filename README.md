@@ -15,6 +15,15 @@ yarn dev
 
 It will start up on [localhost:3000](localhost:3000). You can then make API calls through an application like [Postman](https://getpostman.com).
 
+## Environment Variables
+
+- `PORT`: The port that Express will listen on (must be 3000 for Shibboleth to work).
+- `NODE_ENV`: Setting this to `development` will make Shibboleth work locally and serve stacktraces.
+- `SESSION_SECRET`: The secret used by `express-session`. Can be set to anything.
+- `MONGODB_URI`: The MongoDB connection URI.
+- `BASE_URL`: The URL to the frontend. Redirected to here after authenticating.
+- `CHECK_IN_GRACE_PERIOD`: The period that a member can check in after an event has ended. Stored in milliseconds.
+
 ## Contact
 
 Feel free to reach out to [contact@illinoiswcs.org](mailto:contact@illinoiswcs.org) with any questions or feedback!
