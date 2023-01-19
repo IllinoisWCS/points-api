@@ -3,6 +3,7 @@ const { customAlphabet } = require("nanoid");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const isOfficer = require("../middlewares/isOfficer");
 const Event = require("../models/event");
+const User = require("../models/user");
 
 const nanoid = customAlphabet("123456789abcdefghijkmnopqrstuvwxyz", 6);
 
@@ -44,10 +45,20 @@ router.post("/", isAuthenticated, isOfficer, async (req, res, next) => {
 });
 
 router.delete("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
-  Event.findOneAndDelete({ _id: req.params.id }, function (err, result) {
+  Event.findOneAndDelete({ _id: req.params.id }, async function (err, result) {
     if (err) return next(err);
 
     if (result) {
+      await User.updateMany(
+        { events: result._id },
+        {
+          $pull: {
+            events: result._id,
+          },
+          $inc: { points: -result.points },
+        }
+      );
+
       res.sendStatus(200);
     } else {
       res.sendStatus(404);
@@ -59,10 +70,19 @@ router.patch("/:id", isAuthenticated, isOfficer, async (req, res, next) => {
   Event.findOneAndUpdate(
     { _id: req.params.id },
     { ...req.body },
-    function (err, result) {
+    async function (err, result) {
       if (err) return next(err);
 
       if (result) {
+        if (req.body.points) {
+          await User.updateMany(
+            { events: result._id },
+            {
+              $inc: { points: req.body.points - result.points },
+            }
+          );
+        }
+
         res.sendStatus(200);
       } else {
         res.sendStatus(404);
