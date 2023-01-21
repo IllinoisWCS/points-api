@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const EventSchema = new mongoose.Schema({
+const EventSchema = new Schema<Event>({
   key: { type: String, immutable: true, required: true, unique: true },
   name: { type: String, required: true },
   category: {
@@ -22,4 +22,4 @@ const EventSchema = new mongoose.Schema({
   private: { type: Boolean, default: false }
 });
 
-module.exports = mongoose.model('Event', EventSchema);
+export default model<Event>('Event', EventSchema);

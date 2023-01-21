@@ -1,15 +1,15 @@
-const router = require('express').Router();
-const { customAlphabet } = require('nanoid');
-const isAuthenticated = require('../middlewares/isAuthenticated');
-const isOfficer = require('../middlewares/isOfficer');
-const Event = require('../models/event');
-const User = require('../models/user');
+import express from 'express';
+import { customAlphabet } from 'nanoid';
+import isOfficer from '../middlewares/isOfficer';
+import User from '../models/user';
+import Event from '../models/event';
 
+export const eventsRoute = express.Router();
 const nanoid = customAlphabet('123456789abcdefghijkmnopqrstuvwxyz', 6);
 
-router.get('/', async (req, res, next) => {
+eventsRoute.get('/', async (req, res, next) => {
   let query = {};
-  let projection = ['-__v'];
+  const projection = ['-__v'];
 
   if (!req.user || req.user.role !== 'officer') {
     query = { private: false };
@@ -24,7 +24,7 @@ router.get('/', async (req, res, next) => {
     });
 });
 
-router.post('/', isAuthenticated, isOfficer, async (req, res, next) => {
+eventsRoute.post('/', isOfficer, async (req, res, next) => {
   const eventKey = nanoid();
 
   const event = new Event({
@@ -44,33 +44,36 @@ router.post('/', isAuthenticated, isOfficer, async (req, res, next) => {
   });
 });
 
-router.delete('/:id', isAuthenticated, isOfficer, async (req, res, next) => {
-  Event.findOneAndDelete({ _id: req.params.id }, async function (err, result) {
-    if (err) return next(err);
+eventsRoute.delete('/:id', isOfficer, async (req, res, next) => {
+  Event.findOneAndDelete(
+    { _id: req.params.id },
+    async function (err: NativeError, result: Event) {
+      if (err) return next(err);
 
-    if (result) {
-      await User.updateMany(
-        { events: result._id },
-        {
-          $pull: {
-            events: result._id
-          },
-          $inc: { points: -result.points }
-        }
-      );
+      if (result) {
+        await User.updateMany(
+          { events: result._id },
+          {
+            $pull: {
+              events: result._id
+            },
+            $inc: { points: -result.points }
+          }
+        );
 
-      res.sendStatus(200);
-    } else {
-      res.sendStatus(404);
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(404);
+      }
     }
-  });
+  );
 });
 
-router.patch('/:id', isAuthenticated, isOfficer, async (req, res, next) => {
+eventsRoute.patch('/:id', isOfficer, async (req, res, next) => {
   Event.findOneAndUpdate(
     { _id: req.params.id },
     { ...req.body },
-    async function (err, result) {
+    async function (err: NativeError, result: Event) {
       if (err) return next(err);
 
       if (result) {
@@ -90,5 +93,3 @@ router.patch('/:id', isAuthenticated, isOfficer, async (req, res, next) => {
     }
   );
 });
-
-module.exports = router;

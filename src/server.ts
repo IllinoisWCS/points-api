@@ -1,17 +1,16 @@
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const express = require('express');
-const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo');
-const passport = require('passport');
-const session = require('express-session');
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express, { Express } from 'express';
+import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
+import passport from 'passport';
+import session from 'express-session';
+import { routes } from './routes';
 
 const app = express();
+const port = parseInt(process.env.PORT);
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect(process.env.MONGODB_URI);
 
 app.use(cookieParser());
 app.use(
@@ -32,9 +31,8 @@ app.use(
 );
 app.use(passport.session());
 
-app.use('/', require('./routes/'));
+app.use('/', routes);
 
-const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () =>
   console.log(`Server is listening on port ${port}`)
 );

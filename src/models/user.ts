@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema<User>({
   netId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   created: {
@@ -12,8 +12,8 @@ const UserSchema = new mongoose.Schema({
     default: 'member',
     enum: ['member', 'committee', 'officer']
   },
-  events: [{ type: mongoose.ObjectId, ref: 'Event' }],
+  events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
   points: { type: Number, default: 0, min: 0 }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+export default model<User>('User', UserSchema);
