@@ -1,10 +1,10 @@
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-const express = require("express");
-const mongoose = require("mongoose");
-const MongoStore = require("connect-mongo");
-const passport = require("passport");
-const session = require("express-session");
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const express = require('express');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
+const passport = require('passport');
+const session = require('express-session');
 
 const app = express();
 
@@ -32,9 +32,9 @@ app.use(
 );
 app.use(passport.session());
 
-app.use("/", require("./routes/"));
+app.use('/', require('./routes/'));
 
 const port = process.env.PORT || 3000;
-app.listen(port, "0.0.0.0", () =>
+app.listen(port, '0.0.0.0', () =>
   console.log(`Server is listening on port ${port}`)
 );

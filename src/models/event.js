@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
   key: { type: String, immutable: true, required: true, unique: true },
@@ -6,13 +6,13 @@ const EventSchema = new mongoose.Schema({
   category: {
     type: String,
     enum: [
-      "corporate",
-      "social",
-      "outreach",
-      "mentoring",
-      "explorations",
-      "generalMeeting",
-      "other",
+      'corporate',
+      'social',
+      'outreach',
+      'mentoring',
+      'explorations',
+      'generalMeeting',
+      'other',
     ],
     required: true,
   },
@@ -22,4 +22,4 @@ const EventSchema = new mongoose.Schema({
   private: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model("Event", EventSchema);
+module.exports = mongoose.model('Event', EventSchema);

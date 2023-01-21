@@ -1,10 +1,10 @@
-const router = require("express").Router();
-const User = require("../models/user");
-const Event = require("../models/event");
+const router = require('express').Router();
+const User = require('../models/user');
+const Event = require('../models/event');
 
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   User.findById(req.user._id)
-    .populate({ path: "events", options: { sort: { start: -1 } } })
+    .populate({ path: 'events', options: { sort: { start: -1 } } })
     .exec(function (err, result) {
       if (err) return next(err);
 
@@ -16,15 +16,15 @@ router.get("/", async (req, res, next) => {
     });
 });
 
-router.patch("/", async (req, res, next) => {
+router.patch('/', async (req, res, next) => {
   const event = await Event.findOne({ key: req.body.eventKey });
 
   if (!event) {
-    return res.status(400).send({ message: "Invalid event key" });
+    return res.status(400).send({ message: 'Invalid event key' });
   }
 
   if (new Date() - event.end > process.env.CHECK_IN_GRACE_PERIOD) {
-    return res.status(400).send({ message: "Event not active" });
+    return res.status(400).send({ message: 'Event not active' });
   }
 
   User.findOneAndUpdate(
@@ -36,9 +36,9 @@ router.patch("/", async (req, res, next) => {
       if (result) {
         res
           .status(200)
-          .send({ message: "Checked in successfully", event: event });
+          .send({ message: 'Checked in successfully', event: event });
       } else {
-        res.status(400).send({ message: "Already checked in", event: event });
+        res.status(400).send({ message: 'Already checked in', event: event });
       }
     }
   );

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   netId: { type: String, required: true, unique: true },
@@ -9,11 +9,11 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: "member",
-    enum: ["member", "committee", "officer"],
+    default: 'member',
+    enum: ['member', 'committee', 'officer'],
   },
-  events: [{ type: mongoose.ObjectId, ref: "Event" }],
+  events: [{ type: mongoose.ObjectId, ref: 'Event' }],
   points: { type: Number, default: 0, min: 0 },
 });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model('User', UserSchema);
