@@ -29,7 +29,7 @@ router.post('/', isAuthenticated, isOfficer, async (req, res, next) => {
 
   const event = new Event({
     ...req.body,
-    key: eventKey,
+    key: eventKey
   });
 
   const err = event.validateSync();
@@ -39,7 +39,7 @@ router.post('/', isAuthenticated, isOfficer, async (req, res, next) => {
     if (err) return next(err);
     res.status(200).send({
       message: 'Event created successfully',
-      key: eventKey,
+      key: eventKey
     });
   });
 });
@@ -53,9 +53,9 @@ router.delete('/:id', isAuthenticated, isOfficer, async (req, res, next) => {
         { events: result._id },
         {
           $pull: {
-            events: result._id,
+            events: result._id
           },
-          $inc: { points: -result.points },
+          $inc: { points: -result.points }
         }
       );
 
@@ -78,7 +78,7 @@ router.patch('/:id', isAuthenticated, isOfficer, async (req, res, next) => {
           await User.updateMany(
             { events: result._id },
             {
-              $inc: { points: req.body.points - result.points },
+              $inc: { points: req.body.points - result.points }
             }
           );
         }

@@ -12,14 +12,14 @@ const EventSchema = new mongoose.Schema({
       'mentoring',
       'explorations',
       'generalMeeting',
-      'other',
+      'other'
     ],
-    required: true,
+    required: true
   },
   points: { type: Number, minimum: 0, required: true },
   start: { type: Date, required: true },
   end: { type: Date, required: true },
-  private: { type: Boolean, default: false },
+  private: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('Event', EventSchema);

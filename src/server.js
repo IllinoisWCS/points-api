@@ -10,14 +10,14 @@ const app = express();
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 });
 
 app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.BASE_URL,
-    credentials: true,
+    credentials: true
   })
 );
 app.use(express.json());
@@ -27,7 +27,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({ client: mongoose.connection.getClient() }),
+    store: new MongoStore({ client: mongoose.connection.getClient() })
   })
 );
 app.use(passport.session());

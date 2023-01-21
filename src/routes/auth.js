@@ -23,7 +23,7 @@ passport.use(
       cert: idpCertificate,
       privateKey: samlPrivateKey,
       decryptionPvk: samlPrivateKey,
-      identifierFormat: null,
+      identifierFormat: null
     },
     function (profile, done) {
       const displayName = profile.attributes[DISPLAY_NAME_ATTRIBUTE];
