@@ -1,6 +1,6 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { Express } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 import passport from 'passport';
