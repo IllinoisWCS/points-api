@@ -4,7 +4,7 @@ import User from '../models/user';
 export const usersRoute = express.Router();
 
 usersRoute.get('/', async (_req, res, next) => {
-  User.find({})
+  User.find({}, null, { sort: { points: -1 } })
     .populate({ path: 'events', options: { sort: { start: -1 } } })
     .exec(function (err, result) {
       if (err) return next(err);
