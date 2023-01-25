@@ -13,7 +13,7 @@ yarn
 yarn dev
 ```
 
-It will start up on [localhost:3000](localhost:3000). You can then make API calls through an application like [Postman](https://getpostman.com).
+It will start up on [127.0.0.1:3000](127.0.0.1:3000). You can then make API calls through an application like [Postman](https://getpostman.com).
 
 ## Environment Variables
 
@@ -23,6 +23,7 @@ It will start up on [localhost:3000](localhost:3000). You can then make API call
 - `MONGODB_URI`: The MongoDB connection URI.
 - `BASE_URL`: The URL to the frontend. Redirected to here after authenticating.
 - `CHECK_IN_GRACE_PERIOD`: The period that a member can check in after an event has ended. Stored in milliseconds.
+- `CALLBACK_URL`: Shibboleth callback URL. Must be `http://127.0.0.1:3000/auth/callback` when developing locally.
 
 ## Contact
 

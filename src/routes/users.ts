@@ -1,18 +1,20 @@
-const router = require("express").Router();
-const User = require("../models/user");
+import express from 'express';
+import User from '../models/user';
 
-router.get("/", async (_req, res, next) => {
-  User.find({})
-    .populate({ path: "events", options: { sort: { start: -1 } } })
+export const usersRoute = express.Router();
+
+usersRoute.get('/', async (_req, res, next) => {
+  User.find({}, null, { sort: { points: -1 } })
+    .populate({ path: 'events', options: { sort: { start: -1 } } })
     .exec(function (err, result) {
       if (err) return next(err);
       res.status(200).send(result);
     });
 });
 
-router.get("/:netId", async (req, res, next) => {
+usersRoute.get('/:netId', async (req, res, next) => {
   User.find({ netId: req.params.netId })
-    .populate({ path: "events", options: { sort: { start: -1 } } })
+    .populate({ path: 'events', options: { sort: { start: -1 } } })
     .exec(function (err, result) {
       if (err) return next(err);
 
@@ -24,7 +26,7 @@ router.get("/:netId", async (req, res, next) => {
     });
 });
 
-router.delete("/:netId", async (req, res, next) => {
+usersRoute.delete('/:netId', async (req, res, next) => {
   User.findOneAndDelete({ netId: req.params.netId }).exec(function (
     err,
     result
@@ -39,11 +41,11 @@ router.delete("/:netId", async (req, res, next) => {
   });
 });
 
-router.patch("/:netId", async (req, res, next) => {
+usersRoute.patch('/:netId', async (req, res, next) => {
   User.findOneAndUpdate(
     { netId: req.params.netId },
     { ...req.body },
-    function (err, result) {
+    function (err: NativeError, result: User) {
       if (err) return next(err);
 
       if (result) {
@@ -54,5 +56,3 @@ router.patch("/:netId", async (req, res, next) => {
     }
   );
 });
-
-module.exports = router;
