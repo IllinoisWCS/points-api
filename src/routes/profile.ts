@@ -19,6 +19,9 @@ profileRoute.get('/', async (req, res, next) => {
 });
 
 profileRoute.patch('/', async (req, res, next) => {
+  console.log(`Received PATCH request to /profile from frontend.`);
+  console.log(`Request Body:`, req.body);
+  console.log(`User ID: ${req.user._id}`);
   const event = await Event.findOne({ key: req.body.eventKey });
 
   if (!event) {
