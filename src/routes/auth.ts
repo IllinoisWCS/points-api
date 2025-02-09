@@ -26,7 +26,8 @@ passport.use(
       cert: idpCertificate,
       privateKey: samlPrivateKey,
       decryptionPvk: samlPrivateKey,
-      identifierFormat: null
+      identifierFormat: null,
+      acceptedClockSkewMs: 300000
     },
     function (profile: Profile | null | undefined, done: VerifiedCallback) {
       if (profile != null) {
