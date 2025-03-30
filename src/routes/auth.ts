@@ -106,7 +106,7 @@ authRoute.post(
       if (relayState) {
         const stateString = Buffer.from(relayState, 'base64').toString();
         authContext = JSON.parse(stateString);
-        console.log('Recovered state:', authContext);
+        // console.log('Recovered state:', authContext);
       } else {
         throw new Error('No RelayState found');
       }
@@ -122,12 +122,12 @@ authRoute.post(
 
     if (authContext.fromQR === true) {
       if (authContext.eventKey) {
-        redirectUrl = `${process.env.BASE_URL}/loading/${authContext.eventKey}?postAuth=true`;
+        redirectUrl = `${process.env.BASE_URL}/#/loading/${authContext.eventKey}?postAuth=true`;
       } else {
-        redirectUrl = `${process.env.BASE_URL}/points`;
+        redirectUrl = `${process.env.BASE_URL}/#/points`;
       }
     } else {
-      redirectUrl = `${process.env.BASE_URL}/points`;
+      redirectUrl = `${process.env.BASE_URL}/#/points`;
     }
 
     return res.redirect(redirectUrl);
