@@ -63,14 +63,27 @@ passport.deserializeUser(function (user: Express.User, done) {
   });
 });
 
-authRoute.get('/login', passport.authenticate('saml'));
+authRoute.get('/login', (req, res, next) => {
+  res.cookie('returnTo', req.query.returnTo, {
+    maxAge: 5 * 60 * 1000
+  });
+
+  passport.authenticate('saml')(req, res, next);
+});
 
 authRoute.post(
   '/callback',
   express.urlencoded({ extended: false }),
   passport.authenticate('saml'),
-  function (_req, res) {
-    return res.redirect(process.env.BASE_URL);
+  (req, res) => {
+    const redirectUrl =
+      req.cookies.returnTo === 'undefined'
+        ? `${process.env.BASE_URL}`
+        : `${process.env.BASE_URL}${req.cookies.returnTo}`;
+
+    res.clearCookie('returnTo');
+
+    return res.redirect(redirectUrl);
   }
 );
 
