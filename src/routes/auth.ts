@@ -16,6 +16,16 @@ export const authRoute = express.Router();
 const idpCertificate = fs.readFileSync('shibboleth/itrust.pem', 'utf8');
 const samlPrivateKey = fs.readFileSync('shibboleth/sp-key.pem', 'utf8');
 
+declare module 'express-session' {
+  interface SessionData {
+    authContext?: {
+      fromQR: boolean;
+      eventKey?: string;
+      returnTo?: string;
+    };
+  }
+}
+
 passport.use(
   new SamlStrategy(
     {
@@ -64,10 +74,22 @@ passport.deserializeUser(function (user: Express.User, done) {
 });
 
 authRoute.get('/login', (req, res, next) => {
-  res.cookie('returnTo', req.query.returnTo, {
-    maxAge: 5 * 60 * 1000
-  });
+  //stores authentication context in session
+  const fromQR = req.query.fromQR === 'true';
+  const eventKey = req.query.eventKey as string | undefined;
+  const returnTo = req.query.returnTo as string | undefined;
 
+  const state = Buffer.from(
+    JSON.stringify({
+      fromQR,
+      eventKey,
+      returnTo: returnTo || '/points' //default to /points return unless specified
+    })
+  ).toString('base64');
+
+  (req as any).query.RelayState = state;
+
+  //standard authentication
   passport.authenticate('saml')(req, res, next);
 });
 
@@ -75,13 +97,38 @@ authRoute.post(
   '/callback',
   express.urlencoded({ extended: false }),
   passport.authenticate('saml'),
-  (req, res) => {
-    const redirectUrl =
-      req.cookies.returnTo === 'undefined'
-        ? `${process.env.BASE_URL}`
-        : `${process.env.BASE_URL}${req.cookies.returnTo}`;
+  function (req, res) {
+    let authContext;
 
-    res.clearCookie('returnTo');
+    try {
+      //get back to relaystate state prior to the shibboleth authentication
+      const relayState = (req.body as any).RelayState;
+      if (relayState) {
+        const stateString = Buffer.from(relayState, 'base64').toString();
+        authContext = JSON.parse(stateString);
+        // console.log('Recovered state:', authContext);
+      } else {
+        throw new Error('No RelayState found');
+      }
+    } catch (e) {
+      console.error('Failed to parse RelayState:', e);
+      authContext = {
+        fromQR: false,
+        returnTo: '/points'
+      };
+    }
+
+    let redirectUrl;
+
+    if (authContext.fromQR === true) {
+      if (authContext.eventKey) {
+        redirectUrl = `${process.env.BASE_URL}/#/loading/${authContext.eventKey}?postAuth=true`;
+      } else {
+        redirectUrl = `${process.env.BASE_URL}/#/points`;
+      }
+    } else {
+      redirectUrl = `${process.env.BASE_URL}/#/points`;
+    }
 
     return res.redirect(redirectUrl);
   }
