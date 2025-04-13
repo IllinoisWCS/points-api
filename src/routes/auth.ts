@@ -64,14 +64,40 @@ passport.deserializeUser(function (user: Express.User, done) {
   });
 });
 
-authRoute.get('/login', passport.authenticate('saml'));
+authRoute.get(
+  '/login',
+  (req, res, next) => {
+    const fromQR = req.query.fromQR;
+    const eventKey = req.query.eventKey;
+    const returnTo = req.query.returnTo;
+
+    if (fromQR) {
+      req.query.RelayState = JSON.stringify({
+        fromQR,
+        eventKey,
+        returnTo
+      });
+    }
+    next();
+  },
+  passport.authenticate('saml')
+);
 
 authRoute.post(
   '/callback',
   express.urlencoded({ extended: false }),
   passport.authenticate('saml'),
-  function (_req, res) {
-    return res.redirect(process.env.BASE_URL);
+  function (req, res) {
+    const relayState = req.body.RelayState
+      ? JSON.parse(req.body.RelayState)
+      : null;
+    if (relayState && relayState.fromQR === 'true' && relayState.returnTo) {
+      //log in flow from qr code scan
+      return res.redirect(`${process.env.BASE_URL}${relayState.returnTo}`);
+    } else {
+      //regular login button flow
+      return res.redirect(process.env.BASE_URL);
+    }
   }
 );
 
