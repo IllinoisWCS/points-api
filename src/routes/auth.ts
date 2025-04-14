@@ -36,7 +36,8 @@ passport.use(
       cert: idpCertificate,
       privateKey: samlPrivateKey,
       decryptionPvk: samlPrivateKey,
-      identifierFormat: null
+      identifierFormat: null,
+      acceptedClockSkewMs: 300000
     },
     function (profile: Profile | null | undefined, done: VerifiedCallback) {
       if (profile != null) {
@@ -73,64 +74,40 @@ passport.deserializeUser(function (user: Express.User, done) {
   });
 });
 
-authRoute.get('/login', (req, res, next) => {
-  //stores authentication context in session
-  const fromQR = req.query.fromQR === 'true';
-  const eventKey = req.query.eventKey as string | undefined;
-  const returnTo = req.query.returnTo as string | undefined;
+authRoute.get(
+  '/login',
+  (req, res, next) => {
+    const fromQR = req.query.fromQR;
+    const eventKey = req.query.eventKey;
+    const returnTo = req.query.returnTo;
 
-  const state = Buffer.from(
-    JSON.stringify({
-      fromQR,
-      eventKey,
-      returnTo: returnTo || '/points' //default to /points return unless specified
-    })
-  ).toString('base64');
-
-  (req as any).query.RelayState = state;
-
-  //standard authentication
-  passport.authenticate('saml')(req, res, next);
-});
+    if (fromQR) {
+      req.query.RelayState = JSON.stringify({
+        fromQR,
+        eventKey,
+        returnTo
+      });
+    }
+    next();
+  },
+  passport.authenticate('saml')
+);
 
 authRoute.post(
   '/callback',
   express.urlencoded({ extended: false }),
   passport.authenticate('saml'),
   function (req, res) {
-    let authContext;
-
-    try {
-      //get back to relaystate state prior to the shibboleth authentication
-      const relayState = (req.body as any).RelayState;
-      if (relayState) {
-        const stateString = Buffer.from(relayState, 'base64').toString();
-        authContext = JSON.parse(stateString);
-        // console.log('Recovered state:', authContext);
-      } else {
-        throw new Error('No RelayState found');
-      }
-    } catch (e) {
-      console.error('Failed to parse RelayState:', e);
-      authContext = {
-        fromQR: false,
-        returnTo: '/points'
-      };
-    }
-
-    let redirectUrl;
-
-    if (authContext.fromQR === true) {
-      if (authContext.eventKey) {
-        redirectUrl = `${process.env.BASE_URL}/#/loading/${authContext.eventKey}?postAuth=true`;
-      } else {
-        redirectUrl = `${process.env.BASE_URL}/#/points`;
-      }
+    const relayState = req.body.RelayState
+      ? JSON.parse(req.body.RelayState)
+      : null;
+    if (relayState && relayState.fromQR === 'true' && relayState.returnTo) {
+      //log in flow from qr code scan
+      return res.redirect(`${process.env.BASE_URL}${relayState.returnTo}`);
     } else {
-      redirectUrl = `${process.env.BASE_URL}/#/points`;
+      //regular login button flow
+      return res.redirect(process.env.BASE_URL);
     }
-
-    return res.redirect(redirectUrl);
   }
 );
 
