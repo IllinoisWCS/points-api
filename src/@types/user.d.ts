@@ -11,5 +11,7 @@ declare global {
     role?: UserRole;
     events?: Array<Types.ObjectId>;
     points?: number;
+    n_checkpoints?: number;
+    timestamps?: Date[];
   }
 }
