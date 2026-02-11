@@ -13,7 +13,9 @@ const UserSchema = new Schema<User>({
     enum: ['member', 'committee', 'officer']
   },
   events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
-  points: { type: Number, default: 0, min: 0 }
+  points: { type: Number, default: 0, min: 0 },
+  num_checkpoints: { type: Number, default: 0, min: 0 }, // ADD THIS LINE
+  timestamps: [{ type: Date }] // ADD THIS LINE
 });
 
 export default model<User>('User', UserSchema);
