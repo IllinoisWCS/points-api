@@ -6,12 +6,12 @@ export const checkpointsRoute = express.Router();
 
 checkpointsRoute.post('/redeem', async (req, res) => {
   try {
-    const { userId, checkpointValue } = req.body;
+    const { userId } = req.body;
 
     const user = await User.findByIdAndUpdate(
       userId,
       {
-        $inc: { num_checkpoints: 1 },
+        $inc: { n_checkpoints: 1 },
         $push: { timestamps: new Date() }
       },
       { new: true }
@@ -23,7 +23,7 @@ checkpointsRoute.post('/redeem', async (req, res) => {
 
     res.json({
       success: true,
-      num_checkpoints: user.num_checkpoints,
+      n_checkpoints: user.n_checkpoints,
       timestamps: user.timestamps
     });
   } catch (error) {
@@ -36,16 +36,14 @@ checkpointsRoute.get('/:userId', isAuthenticated, async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const user = await User.findById(userId).select(
-      'num_checkpoints timestamps'
-    );
+    const user = await User.findById(userId).select('n_checkpoints timestamps');
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     res.json({
-      num_checkpoints: user.num_checkpoints,
+      n_checkpoints: user.n_checkpoints,
       timestamps: user.timestamps
     });
   } catch (error) {

@@ -14,7 +14,7 @@ const UserSchema = new Schema<User>({
   },
   events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
   points: { type: Number, default: 0, min: 0 },
-  num_checkpoints: { type: Number, default: 0, min: 0 },
+  n_checkpoints: { type: Number, default: 0, min: 0 },
   timestamps: [{ type: Date }]
 });
 
