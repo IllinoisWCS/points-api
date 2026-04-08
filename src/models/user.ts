@@ -20,7 +20,8 @@ const UserSchema = new Schema<User>({
   n_corporate_events: { type: Number, default: 0, min: 0 },
   n_explorations_events: { type: Number, default: 0, min: 0 },
   n_mentoring_events: { type: Number, default: 0, min: 0 },
-  n_social_events: { type: Number, default: 0, min: 0 }
+  n_social_events: { type: Number, default: 0, min: 0 },
+  badges: [{ type: String, default: [] }]
 });
 
 export default model<User>('User', UserSchema);

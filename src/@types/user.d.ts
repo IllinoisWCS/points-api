@@ -18,5 +18,6 @@ declare global {
     n_explorations_events?: number;
     n_mentoring_events?: number;
     n_social_events?: number;
+    badges?: string[];
   }
 }
