@@ -13,5 +13,11 @@ declare global {
     points?: number;
     n_checkpoints?: number;
     timestamps?: Date[];
+    n_total_events?: number;
+    n_corporate_events?: number;
+    n_explorations_events?: number;
+    n_mentoring_events?: number;
+    n_social_events?: number;
+    badges?: string[];
   }
 }
