@@ -78,15 +78,24 @@ authRoute.get(
   '/login',
   (req, res, next) => {
     const fromQR = req.query.fromQR;
-    const eventKey = req.query.eventKey;
     const returnTo = req.query.returnTo;
 
     if (fromQR) {
+      const eventKey = req.query.eventKey;
+
       req.query.RelayState = JSON.stringify({
         fromQR,
         eventKey,
         returnTo
       });
+    } else {
+      const token = req.query.token;
+      req.query.RelayState = JSON.stringify({
+        fromQR,
+        token,
+        returnTo
+      });
+
     }
     next();
   },
@@ -101,13 +110,27 @@ authRoute.post(
     const relayState = req.body.RelayState
       ? JSON.parse(req.body.RelayState)
       : null;
+    // if (relayState && relayState.fromQR === 'true' && relayState.returnTo) {
+    //   //log in flow from qr code scan
+    //   return res.redirect(`${process.env.BASE_URL}${relayState.returnTo}`);
+    // } else {
+    //   //regular login button flow
+    //   return res.redirect(process.env.BASE_URL);
+    // }
+
+    // QR flow
     if (relayState && relayState.fromQR === 'true' && relayState.returnTo) {
       //log in flow from qr code scan
       return res.redirect(`${process.env.BASE_URL}${relayState.returnTo}`);
-    } else {
-      //regular login button flow
-      return res.redirect(process.env.BASE_URL);
     }
+
+    // QA / token flow
+    if (relayState && relayState.token && relayState.returnTo) {
+      return res.redirect(`${process.env.BASE_URL}/#${relayState.returnTo}`);
+    }
+
+    // Default login
+    return res.redirect(process.env.BASE_URL);
   }
 );
 
