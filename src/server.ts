@@ -6,6 +6,7 @@ import MongoStore from 'connect-mongo';
 import passport from 'passport';
 import session from 'express-session';
 import { routes } from './routes';
+import { vintageRoute } from './routes/vintage';
 
 const app = express();
 const port = parseInt(process.env.PORT);
@@ -33,6 +34,7 @@ app.use(passport.session());
 
 app.use('/', routes);
 
+app.use('/vintage', vintageRoute);
 app.listen(port, '0.0.0.0', () =>
   console.log(`Server is listening on port ${port}`)
 );
