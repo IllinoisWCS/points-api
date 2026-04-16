@@ -35,9 +35,25 @@ profileRoute.patch('/', async (req, res, next) => {
     return res.status(400).send({ message: 'Event not active' });
   }
 
+  const categoryCounterMap: Record<string, string> = {
+    corporate: 'n_corporate_events',
+    explorations: 'n_explorations_events',
+    mentoring: 'n_mentoring_events',
+    social: 'n_social_events'
+  };
+
+  const countersToIncrement: Record<string, number> = { n_total_events: 1 };
+  const categoryCounter = categoryCounterMap[event.category];
+  if (categoryCounter) {
+    countersToIncrement[categoryCounter] = 1;
+  }
+
   User.findOneAndUpdate(
     { _id: req.user._id, events: { $ne: event._id } },
-    { $push: { events: event._id }, $inc: { points: event.points } },
+    {
+      $push: { events: event._id },
+      $inc: { points: event.points, ...countersToIncrement }
+    },
     function (err: NativeError, result: User) {
       if (err) return next(err);
 
