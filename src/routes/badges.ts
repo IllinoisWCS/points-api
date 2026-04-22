@@ -1,5 +1,5 @@
 import express from 'express';
-import Badge from '../models/badges';
+import Badge from '../models/badge';
 export const badgesRoute = express.Router();
 
 badgesRoute.get('/', async (req, res) => {
