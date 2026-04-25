@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/user';
 import Event from '../models/event';
+import { checkAndAwardBadges } from '../utils/badgeHelpers';
 
 export const profileRoute = express.Router();
 
@@ -54,13 +55,23 @@ profileRoute.patch('/', async (req, res, next) => {
       $push: { events: event._id },
       $inc: { points: event.points, ...countersToIncrement }
     },
-    function (err: NativeError, result: User) {
+    { new: true },
+    async function (err: NativeError, result: User) {
       if (err) return next(err);
 
       if (result) {
-        res
-          .status(200)
-          .send({ message: 'Checked in successfully', event: event });
+        const newBadges = await checkAndAwardBadges(result, event.category);
+        if (newBadges.length > 0) {
+          await User.findOneAndUpdate(
+            { _id: req.user._id },
+            { $push: { badges: { $each: newBadges } } }
+          );
+        }
+        res.status(200).send({
+          message: 'Checked in successfully',
+          event: event,
+          newBadges: newBadges
+        });
       } else {
         res.status(400).send({ message: 'Already checked in', event: event });
       }
