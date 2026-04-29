@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/user';
 import Event from '../models/event';
+import { verifyToken } from '../middlewares/jwtVerify';
 
 export const profileRoute = express.Router();
 
@@ -66,4 +67,29 @@ profileRoute.patch('/', async (req, res, next) => {
       }
     }
   );
+});
+
+profileRoute.patch('/submitQA', verifyToken, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).send({ message: 'Not authenticated' });
+    }
+
+    const result = await User.findByIdAndUpdate(
+      req.user._id,
+      { $inc: { points: 0.5 } },
+      { new: true }
+    );
+
+    if (!result) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    return res.status(200).send({
+      message: '0.5 points added successfully',
+      points: result.points
+    });
+  } catch (err) {
+    return next(err);
+  }
 });
