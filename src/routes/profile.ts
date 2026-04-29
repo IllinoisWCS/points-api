@@ -73,7 +73,6 @@ profileRoute.patch('/submitQA', verifyToken, async (req, res, next) => {
       message: '0.5 points added successfully',
       points: result.points
     });
-
   } catch (err) {
     return next(err);
   }

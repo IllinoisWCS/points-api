@@ -95,7 +95,6 @@ authRoute.get(
         token,
         returnTo
       });
-
     }
     next();
   },
