@@ -66,37 +66,41 @@ profileRoute.patch('/', async (req, res, next) => {
   );
 });
 
-profileRoute.patch('/submitQA', verifyToken, async (req, res, next) => {
-  try {
-    if (!req.user) {
-      return res.status(401).send({ message: 'Not authenticated' });
+profileRoute.patch(
+  '/submitForumAnswer',
+  verifyToken,
+  async (req, res, next) => {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ message: 'Not authenticated' });
+      }
+
+      const forumAnswerEvent = await Event.findOne({ key: 'forum-answer' });
+      if (!forumAnswerEvent) {
+        return res
+          .status(500)
+          .send({ message: 'Forum answer event not configured' });
+      }
+
+      const result = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+          $push: { events: forumAnswerEvent._id },
+          $inc: { points: 0.5, n_total_events: 1 }
+        },
+        { new: true }
+      );
+
+      if (!result) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+
+      return res.status(200).send({
+        message: '0.5 points added successfully',
+        points: result.points
+      });
+    } catch (err) {
+      return next(err);
     }
-
-    const forumAnswerEvent = await Event.findOne({ key: 'forum-answer' });
-    if (!forumAnswerEvent) {
-      return res
-        .status(500)
-        .send({ message: 'Forum answer event not configured' });
-    }
-
-    const result = await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        $push: { events: forumAnswerEvent._id },
-        $inc: { points: 0.5, n_total_events: 1 }
-      },
-      { new: true }
-    );
-
-    if (!result) {
-      return res.status(404).send({ message: 'User not found' });
-    }
-
-    return res.status(200).send({
-      message: '0.5 points added successfully',
-      points: result.points
-    });
-  } catch (err) {
-    return next(err);
   }
-});
+);
