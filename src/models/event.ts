@@ -17,9 +17,20 @@ const EventSchema = new Schema<Event>({
     required: true
   },
   points: { type: Number, minimum: 0, required: true },
-  start: { type: Date, required: true },
-  end: { type: Date, required: true },
-  private: { type: Boolean, default: false }
+  start: {
+    type: Date,
+    required: function () {
+      return !this.isSystem;
+    }
+  },
+  end: {
+    type: Date,
+    required: function () {
+      return !this.isSystem;
+    }
+  },
+  private: { type: Boolean, default: false },
+  isSystem: { type: Boolean, default: false }
 });
 
 export default model<Event>('Event', EventSchema);

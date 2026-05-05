@@ -6,23 +6,19 @@ import { verifyToken } from '../middlewares/jwtVerify';
 export const profileRoute = express.Router();
 
 profileRoute.get('/', async (req, res, next) => {
-  User.findById(req.user._id)
-    .populate({ path: 'events', options: { sort: { start: -1 } } })
-    .exec(function (err, result) {
-      if (err) return next(err);
+  const user = await User.findById(req.user._id).lean();
+  if (!user) return res.sendStatus(404);
 
-      if (result) {
-        res.status(200).send(result);
-      } else {
-        res.sendStatus(404);
-      }
-    });
+  const events = await Promise.all(
+    user.events.map((id) => Event.findById(id).lean())
+  );
+
+  const filteredEvents = events.filter((e) => e !== null);
+
+  return res.status(200).send({ ...user, events: filteredEvents });
 });
 
 profileRoute.patch('/', async (req, res, next) => {
-  // console.log(`Received PATCH request to /profile from frontend.`);
-  // console.log(`Request Body:`, req.body);
-  // console.log(`User ID: ${req.user._id}`);
   const event = await Event.findOne({ key: req.body.eventKey });
 
   if (!event) {
@@ -30,8 +26,9 @@ profileRoute.patch('/', async (req, res, next) => {
   }
 
   if (
+    !event.isSystem &&
     new Date().getTime() - new Date(event.end).getTime() >
-    parseInt(process.env.CHECK_IN_GRACE_PERIOD)
+      parseInt(process.env.CHECK_IN_GRACE_PERIOD)
   ) {
     return res.status(400).send({ message: 'Event not active' });
   }
@@ -75,9 +72,19 @@ profileRoute.patch('/submitQA', verifyToken, async (req, res, next) => {
       return res.status(401).send({ message: 'Not authenticated' });
     }
 
+    const forumAnswerEvent = await Event.findOne({ key: 'forum-answer' });
+    if (!forumAnswerEvent) {
+      return res
+        .status(500)
+        .send({ message: 'Forum answer event not configured' });
+    }
+
     const result = await User.findByIdAndUpdate(
       req.user._id,
-      { $inc: { points: 0.5 } },
+      {
+        $push: { events: forumAnswerEvent._id },
+        $inc: { points: 0.5, n_total_events: 1 }
+      },
       { new: true }
     );
 
