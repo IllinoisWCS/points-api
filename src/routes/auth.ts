@@ -1,5 +1,6 @@
 import express from 'express';
 import fs from 'fs';
+import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import {
   Profile,
@@ -15,6 +16,14 @@ export const authRoute = express.Router();
 
 const idpCertificate = fs.readFileSync('shibboleth/itrust.pem', 'utf8');
 const samlPrivateKey = fs.readFileSync('shibboleth/sp-key.pem', 'utf8');
+
+function getJWT(user: Express.User): string {
+  return jwt.sign(
+    { netId: user.netId, _id: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: '10m' }
+  );
+}
 
 declare module 'express-session' {
   interface SessionData {
@@ -78,23 +87,17 @@ authRoute.get(
   '/login',
   (req, res, next) => {
     const fromQR = req.query.fromQR;
+    const fromQA = req.query.fromQA;
     const returnTo = req.query.returnTo;
 
-    if (fromQR) {
+    if (fromQA) {
+      req.query.RelayState = JSON.stringify({ fromQA, returnTo });
+    } else if (fromQR) {
       const eventKey = req.query.eventKey;
-
-      req.query.RelayState = JSON.stringify({
-        fromQR,
-        eventKey,
-        returnTo
-      });
+      req.query.RelayState = JSON.stringify({ fromQR, eventKey, returnTo });
     } else {
       const token = req.query.token;
-      req.query.RelayState = JSON.stringify({
-        fromQR,
-        token,
-        returnTo
-      });
+      req.query.RelayState = JSON.stringify({ fromQR, token, returnTo });
     }
     next();
   },
@@ -109,17 +112,15 @@ authRoute.post(
     const relayState = req.body.RelayState
       ? JSON.parse(req.body.RelayState)
       : null;
-    // if (relayState && relayState.fromQR === 'true' && relayState.returnTo) {
-    //   //log in flow from qr code scan
-    //   return res.redirect(`${process.env.BASE_URL}${relayState.returnTo}`);
-    // } else {
-    //   //regular login button flow
-    //   return res.redirect(process.env.BASE_URL);
-    // }
+
+    // QA forum flow - issue JWT and redirect back to QA site
+    if (relayState && relayState.fromQA === 'true') {
+      const token = getJWT(req.user);
+      return res.redirect(`${process.env.BASE_URL}/#/submitAnswer/${token}`);
+    }
 
     // QR flow
     if (relayState && relayState.fromQR === 'true' && relayState.returnTo) {
-      //log in flow from qr code scan
       return res.redirect(`${process.env.BASE_URL}${relayState.returnTo}`);
     }
 
