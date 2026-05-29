@@ -61,3 +61,22 @@ export async function checkTieredBadge(
 
   return null;
 }
+
+export async function checkAndAwardBadges(
+  user: User,
+  eventType: string
+): Promise<string[]> {
+  const categoryMap: Record<string, string> = {
+    corporate: 'n_corporate_events',
+    explorations: 'n_explorations_events',
+    mentoring: 'n_mentoring_events',
+    social: 'n_social_events'
+  };
+  const counterField = categoryMap[eventType];
+  const results = await Promise.all([
+    checkAllRounder(user),
+    checkHelloWorld(user),
+    counterField ? checkTieredBadge(user, counterField, 1, 3, 5) : null
+  ]);
+  return results.filter((badge): badge is string => badge !== null);
+}
