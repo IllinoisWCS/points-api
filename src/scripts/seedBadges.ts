@@ -15,6 +15,7 @@ const badges = [
   {
     name: 'Corporate Intern',
     description: `Attended ${CORPORATE_TIERS[0]} corporate event. Welcome to the corporate world!`,
+    unearnedDescription: `Attend ${CORPORATE_TIERS[0]} corporate event.`,
     tier: 1,
     shape: 'diamond',
     image: 'corporate_intern.png',
@@ -25,6 +26,7 @@ const badges = [
   {
     name: 'Corporate Consultant',
     description: `Attended ${CORPORATE_TIERS[1]} corporate events. You're climbing that corporate ladder!`,
+    unearnedDescription: `Attend ${CORPORATE_TIERS[1]} corporate events.`,
     tier: 2,
     shape: 'hexagon',
     image: 'corporate_consultant.png',
@@ -35,6 +37,7 @@ const badges = [
   {
     name: 'Corporate Insider',
     description: `Attended ${CORPORATE_TIERS[2]} corporate events. Shhh! You know all the secrets now.`,
+    unearnedDescription: `Attend ${CORPORATE_TIERS[2]} corporate events.`,
     tier: 3,
     shape: 'shield',
     image: 'corporate_insider.png',
@@ -47,6 +50,7 @@ const badges = [
   {
     name: 'Explorations Rookie',
     description: `Attended ${EXPLORATIONS_TIERS[0]} explorations event. The adventure begins!`,
+    unearnedDescription: `Attend ${EXPLORATIONS_TIERS[0]} explorations event.`,
     tier: 1,
     shape: 'diamond',
     image: 'explorations_rookie.png',
@@ -57,6 +61,7 @@ const badges = [
   {
     name: 'Explorations Navigator',
     description: `Attended ${EXPLORATIONS_TIERS[1]} explorations events. Charting new territory!`,
+    unearnedDescription: `Attend ${EXPLORATIONS_TIERS[1]} explorations events.`,
     tier: 2,
     shape: 'hexagon',
     image: 'explorations_navigator.png',
@@ -67,6 +72,7 @@ const badges = [
   {
     name: 'Explorations Pioneer',
     description: `Attended ${EXPLORATIONS_TIERS[2]} explorations events. You're an iconic trailblazer!`,
+    unearnedDescription: `Attend ${EXPLORATIONS_TIERS[2]} explorations events.`,
     tier: 3,
     shape: 'shield',
     image: 'explorations_pioneer.png',
@@ -79,6 +85,7 @@ const badges = [
   {
     name: 'Mentoring Sprout',
     description: `Attended ${MENTORING_TIERS[0]} mentoring event. Just starting to grow!`,
+    unearnedDescription: `Attend ${MENTORING_TIERS[0]} mentoring event.`,
     tier: 1,
     shape: 'diamond',
     image: 'mentoring_sprout.png',
@@ -89,6 +96,7 @@ const badges = [
   {
     name: 'Mentoring Guide',
     description: `Attended ${MENTORING_TIERS[1]} mentoring events. Lead the way!`,
+    unearnedDescription: `Attend ${MENTORING_TIERS[1]} mentoring events.`,
     tier: 2,
     shape: 'hexagon',
     image: 'mentoring_guide.png',
@@ -99,6 +107,7 @@ const badges = [
   {
     name: 'Mentoring Beacon',
     description: `Attended ${MENTORING_TIERS[2]} mentoring events. What a shining light!`,
+    unearnedDescription: `Attend ${MENTORING_TIERS[2]} mentoring events.`,
     tier: 3,
     shape: 'shield',
     image: 'mentoring_beacon.png',
@@ -111,6 +120,7 @@ const badges = [
   {
     name: 'Social Caterpillar',
     description: `Attended ${SOCIAL_TIERS[0]} social event. Keep crawling forward!`,
+    unearnedDescription: `Attend ${SOCIAL_TIERS[0]} social event.`,
     tier: 1,
     shape: 'diamond',
     image: 'social_caterpillar.png',
@@ -121,6 +131,7 @@ const badges = [
   {
     name: 'Social Chrysalis',
     description: `Attended ${SOCIAL_TIERS[1]} social events. You're transforming!`,
+    unearnedDescription: `Attend ${SOCIAL_TIERS[1]} social events.`,
     tier: 2,
     shape: 'hexagon',
     image: 'social_chrysalis.png',
@@ -131,6 +142,7 @@ const badges = [
   {
     name: 'Social Butterfly',
     description: `Attended ${SOCIAL_TIERS[2]} social events. Spreading your wings!`,
+    unearnedDescription: `Attend ${SOCIAL_TIERS[2]} social events.`,
     tier: 3,
     shape: 'shield',
     image: 'social_butterfly.png',
@@ -144,6 +156,7 @@ const badges = [
     name: 'All Rounder',
     description:
       'Attended at least 1 event from every committee. What a holistic individual!',
+    unearnedDescription: 'Attend at least 1 event from every committee.',
     shape: 'circle',
     image: 'all_rounder.png',
     isTiered: false
@@ -151,6 +164,7 @@ const badges = [
   {
     name: 'Hello World',
     description: 'Attended your first WCS event. Welcome to the community!',
+    unearnedDescription: 'Attend your first WCS event.',
     shape: 'circle',
     image: 'hello_world.png',
     isTiered: false
