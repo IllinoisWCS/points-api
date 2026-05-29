@@ -16,8 +16,9 @@ declare global {
     name: string;
     category: EventCategory;
     points: number;
-    start: Date;
-    end: Date;
+    start?: Date;
+    end?: Date;
     private?: boolean;
+    isSystem?: boolean;
   }
 }
