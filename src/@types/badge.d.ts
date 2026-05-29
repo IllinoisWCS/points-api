@@ -13,6 +13,7 @@ declare global {
     _id: Types.ObjectId;
     name: string;
     description: string;
+    unearnedDescription: string;
     tier?: Tier;
     shape: BadgeShape;
     image: string;
