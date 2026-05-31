@@ -14,7 +14,7 @@ export function checkAllRounder(user: User): string | null {
 }
 
 export function checkHelloWorld(user: User): string | null {
-  if (user.badges.includes('Hello World')) {
+  if (user.badges?.includes('Hello World')) {
     return null;
   }
   return (user.n_total_events ?? 0) >= 1 ? 'Hello World' : null;
@@ -34,7 +34,7 @@ export async function checkTieredBadge(
       tier: 3
     });
 
-    if (badge && !user.badges.includes(badge.name)) {
+    if (badge && !user.badges?.includes(badge.name)) {
       return badge.name;
     }
   } else if (user[counterField] >= tier2) {
@@ -44,7 +44,7 @@ export async function checkTieredBadge(
       tier: 2
     });
 
-    if (badge && !user.badges.includes(badge.name)) {
+    if (badge && !user.badges?.includes(badge.name)) {
       return badge.name;
     }
   } else if (user[counterField] >= tier1) {
@@ -54,7 +54,7 @@ export async function checkTieredBadge(
       tier: 1
     });
 
-    if (badge && !user.badges.includes(badge.name)) {
+    if (badge && !user.badges?.includes(badge.name)) {
       return badge.name;
     }
   }
