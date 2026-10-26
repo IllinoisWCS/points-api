@@ -7,6 +7,7 @@ import { usersRoute } from './users';
 import { checkpointsRoute } from './checkpoints';
 import { badgesRoute } from './badges';
 import { vintageRoute } from './vintage';
+import { mapStoriesRoute } from './mapStories';
 
 export const routes = express.Router();
 
@@ -17,6 +18,7 @@ routes.use('/users', isAuthenticated, usersRoute);
 routes.use('/checkpoints', checkpointsRoute);
 routes.use('/badges', badgesRoute);
 routes.use('/vintage', vintageRoute);
+routes.use('/alumni-map', mapStoriesRoute);
 
 routes.use((_req, res) => {
   res.sendStatus(404);

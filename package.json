@@ -9,6 +9,7 @@
     "mongodb": "^4.1.0"
   },
   "dependencies": {
+    "@notionhq/client": "^2.3.0",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -49,6 +50,7 @@
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
-    "dev": "nodemon --files -r dotenv/config"
+    "dev": "nodemon --files -r dotenv/config",
+    "sync:map": "ts-node --files src/scripts/syncMapStories.ts"
   }
 }
