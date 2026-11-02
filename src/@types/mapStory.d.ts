@@ -13,5 +13,22 @@ declare global {
     // Optional (use `?`): lat, long, linkedinUrl, headshotUrl
     // With defaults (use `?`): approved, displayPublicly
     // From { timestamps: true } (use `?`): createdAt, updatedAt
+    notionPageId: string;
+    name: string;
+    story: string;
+    type: MapStoryType;
+    city: string;
+    state: string;
+    gradYear: number;
+    company: string;
+    jobTitle: string;
+    lat?: number;
+    long?: number;
+    linkedinUrl?: string;
+    headshotUrl?: string;
+    approved?: boolean;
+    displayPublicly?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
   }
 }
