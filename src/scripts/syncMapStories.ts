@@ -2,36 +2,33 @@ import { Client } from '@notionhq/client';
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import dotenv from 'dotenv';
 
-// TODO (Task 3): read approved rows from the "TEST Alumni Map Data" Notion
-// database and print them as objects matching src/models/mapStory.ts.
-// No Mongo writes yet.
-//
-// - Use `new Client({ auth: process.env.NOTION_MAP_TOKEN })` from
-//   @notionhq/client (pinned to v2, same as the website).
-// - Query process.env.NOTION_MAP_DATABASE_ID with a filter on Approved.
-// - Notion returns at most 100 rows per call. Loop while `has_more` is true,
-//   passing `next_cursor` as `start_cursor`. See IllinoisWCS.github.io
-//   src/server/server.js lines 85-101 (pagination) and 253-266 (filter +
-//   pagination).
-
 // run with: yarn sync:map
 dotenv.config();
 
+const { NOTION_MAP_TOKEN, NOTION_MAP_DATABASE_ID } = process.env;
+if (!NOTION_MAP_TOKEN || !NOTION_MAP_DATABASE_ID) {
+  console.error(
+    'syncMapStories: NOTION_MAP_TOKEN and NOTION_MAP_DATABASE_ID must be set in .env'
+  );
+  process.exit(1);
+}
+
 // initialize Notion client using API token
 const notion = new Client({
-  auth: process.env.NOTION_MAP_TOKEN
+  auth: NOTION_MAP_TOKEN
 });
 
 type NotionProperty = PageObjectResponse['properties'][string];
 
-// extracts plain text from Notion text fields
+// extracts plain text from Notion text fields. Notion splits text into
+// several pieces wherever formatting changes, so join all of them.
 function getText(property: NotionProperty): string | undefined {
   if ('title' in property) {
-    return property.title[0]?.plain_text;
+    return property.title.map((t) => t.plain_text).join('') || undefined;
   }
 
   if ('rich_text' in property) {
-    return property.rich_text[0]?.plain_text;
+    return property.rich_text.map((t) => t.plain_text).join('') || undefined;
   }
 
   return undefined;
@@ -104,7 +101,7 @@ async function sync() {
 
   do {
     const response = await notion.databases.query({
-      database_id: process.env.NOTION_MAP_DATABASE_ID!,
+      database_id: NOTION_MAP_DATABASE_ID,
       filter: {
         and: [
           {
