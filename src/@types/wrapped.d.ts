@@ -1,6 +1,5 @@
 declare global {
   interface WrappedStats {
-    schemaVersion: 1;
     period: {
       label: string; // "2025–2026"
       startDate: string; // "YYYY-MM-DD", inclusive, by Event.start
