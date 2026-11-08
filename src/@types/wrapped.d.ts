@@ -20,7 +20,6 @@ declare global {
       tier: Tier | null;
     } | null;
     badgesEarned: number; // User.badges.length (lifetime)
-    generatedAt: string; // ISO 8601
   }
 }
 
