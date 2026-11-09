@@ -30,7 +30,7 @@ export async function geocode(
 
     if (!response.ok) {
       console.warn(
-        'Nominatim request failed for ${city}, ${state}: ${response.status}'
+        `Nominatim request failed for ${city}, ${state}: ${response.status}`
       );
       return null;
     }
@@ -43,7 +43,7 @@ export async function geocode(
       long: Number(results[0].lon)
     };
   } catch (error) {
-    console.warn('Nominatim request error for ${city}, ${state}:', error);
+    console.warn(`Nominatim request error for ${city}, ${state}:`, error);
     return null;
   }
 }
