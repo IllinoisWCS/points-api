@@ -1,10 +1,8 @@
 import { Client } from '@notionhq/client';
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
-import express from 'express';
 import mongoose from 'mongoose';
-import MongoStore from 'connect-mongo';
-import session from 'express-session';
 import dotenv from 'dotenv';
+import MapStory from '../models/mapStory';
 
 // run with: yarn sync:map
 dotenv.config();
@@ -21,13 +19,6 @@ if (!NOTION_MAP_TOKEN || !NOTION_MAP_DATABASE_ID) {
 const notion = new Client({
   auth: NOTION_MAP_TOKEN
 });
-
-// sets up backend server and connects to MongoDB
-const app = express();
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.error('MongoDB connection error:', error));
 
 type NotionProperty = PageObjectResponse['properties'][string];
 
@@ -164,7 +155,57 @@ async function sync() {
     cursor = response.next_cursor ?? undefined;
   } while (hasMore);
 
-  console.log(stories);
+  let synced = 0;
+  let skipped = 0;
+  let removed = 0;
+  for (const story of stories) {
+    try {
+      // validate before attempting to save
+      const mapStory = new MapStory(story);
+      await mapStory.validate();
+
+      // find existing story and updates information
+      await MapStory.findOneAndUpdate(
+        { notionPageId: story.notionPageId },
+        story,
+        { upsert: true, runValidators: true }
+      );
+      ++synced;
+      console.log(`Saved story: ${story.name}`);
+    } catch (error) {
+      // handle error if save fails
+      ++skipped;
+      console.error(`Failed to save story: ${story.name}`, error);
+    }
+  }
+
+  // deletes all mongoDB stories that don't have a notionID that is present in the Notion database
+  const notionPageIds = stories.map((story) => story.notionPageId);
+  const deleteResult = await MapStory.deleteMany({
+    notionPageId: { $nin: notionPageIds }
+  });
+  removed = deleteResult.deletedCount;
+
+  console.log(
+    `Sync complete: synced ${synced}, skipped ${skipped}, removed ${removed}`
+  );
 }
 
-sync();
+async function main() {
+  // ensures mongo connects before continuing
+  await mongoose.connect(process.env.MONGODB_URI!);
+  console.log('Connected to MongoDB');
+
+  // ensures sync process finishes before main finishes
+  try {
+    await sync();
+  } finally {
+    await mongoose.disconnect();
+    console.log('Disconnected from MongoDB');
+  }
+}
+
+// handle sync errors
+main().catch((error) => {
+  console.error('Sync failed:', error);
+});
