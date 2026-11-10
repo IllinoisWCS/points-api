@@ -1,5 +1,9 @@
 import { Client } from '@notionhq/client';
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import express from 'express';
+import mongoose from 'mongoose';
+import MongoStore from 'connect-mongo';
+import session from 'express-session';
 import dotenv from 'dotenv';
 
 // run with: yarn sync:map
@@ -17,6 +21,13 @@ if (!NOTION_MAP_TOKEN || !NOTION_MAP_DATABASE_ID) {
 const notion = new Client({
   auth: NOTION_MAP_TOKEN
 });
+
+// sets up backend server and connects to MongoDB
+const app = express();
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => console.error('MongoDB connection error:', error));
 
 type NotionProperty = PageObjectResponse['properties'][string];
 
