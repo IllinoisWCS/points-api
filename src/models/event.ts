@@ -12,7 +12,7 @@ const EventSchema = new Schema<Event>({
       'mentoring',
       'explorations',
       'generalMeeting',
-      'other'
+      'openOffice'
     ],
     required: true
   },
