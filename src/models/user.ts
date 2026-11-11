@@ -15,7 +15,8 @@ const UserSchema = new Schema<User>({
   events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
   points: { type: Number, default: 0, min: 0 },
   n_checkpoints: { type: Number, default: 0, min: 0 },
-  timestamps: { type: [Date], default: [] },
+  timestamps: { type: [Date], default: [] }, //could be used to store checkins
+  //checkin_timestaps: { type: [Date], default: [] },
   n_total_events: { type: Number, default: 0, min: 0 },
   n_corporate_events: { type: Number, default: 0, min: 0 },
   n_explorations_events: { type: Number, default: 0, min: 0 },
