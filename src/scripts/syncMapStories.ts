@@ -7,10 +7,10 @@ import MapStory from '../models/mapStory';
 // run with: yarn sync:map
 dotenv.config();
 
-const { NOTION_MAP_TOKEN, NOTION_MAP_DATABASE_ID } = process.env;
-if (!NOTION_MAP_TOKEN || !NOTION_MAP_DATABASE_ID) {
+const { NOTION_MAP_TOKEN, NOTION_MAP_DATABASE_ID, MONGODB_URI } = process.env;
+if (!NOTION_MAP_TOKEN || !NOTION_MAP_DATABASE_ID || !MONGODB_URI) {
   console.error(
-    'syncMapStories: NOTION_MAP_TOKEN and NOTION_MAP_DATABASE_ID must be set in .env'
+    'syncMapStories: NOTION_MAP_TOKEN, NOTION_MAP_DATABASE_ID and MONGODB_URI must be set in .env'
   );
   process.exit(1);
 }
@@ -179,12 +179,21 @@ async function sync() {
     }
   }
 
-  // deletes all mongoDB stories that don't have a notionID that is present in the Notion database
-  const notionPageIds = stories.map((story) => story.notionPageId);
-  const deleteResult = await MapStory.deleteMany({
-    notionPageId: { $nin: notionPageIds }
-  });
-  removed = deleteResult.deletedCount;
+  // deletes all mongoDB stories that don't have a notionID that is present in the Notion database.
+  // If Notion returned nothing, skip this: it's more likely a misconfigured
+  // database or filter than every story being taken down, and deleting would
+  // wipe the whole map.
+  if (stories.length === 0) {
+    console.warn(
+      'Notion returned 0 stories, so nothing was removed from MongoDB. Check NOTION_MAP_DATABASE_ID and the Approved/Display Publicly filter.'
+    );
+  } else {
+    const notionPageIds = stories.map((story) => story.notionPageId);
+    const deleteResult = await MapStory.deleteMany({
+      notionPageId: { $nin: notionPageIds }
+    });
+    removed = deleteResult.deletedCount;
+  }
 
   console.log(
     `Sync complete: synced ${synced}, skipped ${skipped}, removed ${removed}`
@@ -193,7 +202,7 @@ async function sync() {
 
 async function main() {
   // ensures mongo connects before continuing
-  await mongoose.connect(process.env.MONGODB_URI!);
+  await mongoose.connect(MONGODB_URI);
   console.log('Connected to MongoDB');
 
   // ensures sync process finishes before main finishes
@@ -208,4 +217,6 @@ async function main() {
 // handle sync errors
 main().catch((error) => {
   console.error('Sync failed:', error);
+  // non-zero exit code so whatever runs this (e.g. a cron job) can tell it failed
+  process.exitCode = 1;
 });
