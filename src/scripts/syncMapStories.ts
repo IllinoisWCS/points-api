@@ -1,5 +1,6 @@
 import { Client } from '@notionhq/client';
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { geocode } from '../utils/geocode';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import MapStory from '../models/mapStory';
@@ -144,9 +145,7 @@ async function sync() {
           headshotUrl: getHeadshotUrl(properties['Headshot']),
           approved: getCheckbox(properties['Approved']),
           displayPublicly: getCheckbox(properties['Display Publicly']),
-          notionPageId: page.id,
-          lat: undefined,
-          long: undefined
+          notionPageId: page.id
         };
       });
 
@@ -158,16 +157,57 @@ async function sync() {
   let synced = 0;
   let skipped = 0;
   let removed = 0;
+  let geocoded = 0;
+
+  const existingStories = await MapStory.find({});
+  const existingById = new Map(
+    existingStories.map((existing) => [existing.notionPageId, existing])
+  );
+
   for (const story of stories) {
+    const existing = existingById.get(story.notionPageId);
+    let lat: number | undefined;
+    let long: number | undefined;
+
+    if (
+      existing &&
+      existing.city === story.city &&
+      existing.state === story.state &&
+      typeof existing.lat === 'number' &&
+      typeof existing.long === 'number'
+    ) {
+      // same place as last sync, so reuse the saved coordinates
+      lat = existing.lat;
+      long = existing.long;
+    } else if (story.city && story.state) {
+      // new story, moved, or missing coordinates
+      const coords = await geocode(story.city, story.state);
+      ++geocoded;
+      if (coords) {
+        lat = coords.lat;
+        long = coords.long;
+      } else {
+        console.warn(
+          `Could not geocode ${story.city}, ${story.state} for ${story.name}. Saving without coordinates.`
+        );
+      }
+    }
+
     try {
       // validate before attempting to save
-      const mapStory = new MapStory(story);
+      const mapStory = new MapStory({ ...story, lat, long });
       await mapStory.validate();
+
+      // if geocoding failed, clear any old coordinates so the next sync retries
+      const update =
+        lat !== undefined && long !== undefined
+          ? { ...story, lat, long }
+          : { ...story, $unset: { lat: 1, long: 1 } };
 
       // find existing story and updates information
       await MapStory.findOneAndUpdate(
         { notionPageId: story.notionPageId },
-        story,
+        update,
         { upsert: true, runValidators: true }
       );
       ++synced;
@@ -196,7 +236,7 @@ async function sync() {
   }
 
   console.log(
-    `Sync complete: synced ${synced}, skipped ${skipped}, removed ${removed}`
+    `Sync complete: synced ${synced}, skipped ${skipped}, removed ${removed}, geocoded ${geocoded}`
   );
 }
 
