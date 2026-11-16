@@ -7,7 +7,7 @@ import { usersRoute } from './users';
 import { checkpointsRoute } from './checkpoints';
 import { badgesRoute } from './badges';
 import { vintageRoute } from './vintage';
-
+import { wrappedRoute } from './wrapped';
 export const routes = express.Router();
 
 routes.use('/auth', authRoute);
@@ -17,6 +17,7 @@ routes.use('/users', isAuthenticated, usersRoute);
 routes.use('/checkpoints', checkpointsRoute);
 routes.use('/badges', badgesRoute);
 routes.use('/vintage', vintageRoute);
+routes.use('/wrapped', isAuthenticated, wrappedRoute);
 
 routes.use((_req, res) => {
   res.sendStatus(404);
