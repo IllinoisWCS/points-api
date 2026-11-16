@@ -9,7 +9,10 @@ declare global {
       endDate: string;
     };
     displayName: string; // User.name first word
-    totalEvents: number; 
+    totalEvents: number; // non-system events in period
+    // hours at WCS events. mock for now: end - start doesn't work as
+    // multi-day event (e.g. a weekend hackathon)s dont work this way
+    // will need a real per event duration
     totalHours: number;
     totalPoints: number; // sum of Event.points
     eventCountsByType: Record<EventCategory, number>; // a
