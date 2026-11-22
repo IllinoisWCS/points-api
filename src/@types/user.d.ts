@@ -10,6 +10,7 @@ declare global {
     created?: Date;
     role?: UserRole;
     events?: Array<Types.ObjectId>;
+    checkIns: { eventId: string; timestamp: Date }[];
     points?: number;
     n_checkpoints?: number;
     timestamps?: Date[];

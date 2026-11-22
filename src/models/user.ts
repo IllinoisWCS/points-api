@@ -13,6 +13,7 @@ const UserSchema = new Schema<User>({
     enum: ['member', 'committee', 'officer']
   },
   events: [{ type: Schema.Types.ObjectId, ref: 'Event' }],
+  checkIns: [{ eventId: String, timestamp: Date }],
   points: { type: Number, default: 0, min: 0 },
   n_checkpoints: { type: Number, default: 0, min: 0 },
   timestamps: { type: [Date], default: [] },

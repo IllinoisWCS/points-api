@@ -50,7 +50,10 @@ profileRoute.patch('/', async (req, res, next) => {
   User.findOneAndUpdate(
     { _id: req.user._id, events: { $ne: event._id } },
     {
-      $push: { events: event._id },
+      $push: {
+        events: event._id,
+        checkIns: { eventId: event._id, timestamp: new Date() }
+      },
       $inc: { points: event.points, ...countersToIncrement }
     },
     { new: true },
